@@ -18,18 +18,19 @@ async function bootstrap() {
     'API para o projeto de alarmes'
   ).setVersion(
     '1.0'
-  ).addBearerAuth({ 
-    // I was also testing it without prefix 'Bearer ' before the JWT
-    description: `Please enter token in following format: Bearer <JWT>`,
-    name: 'Authorization',
-    bearerFormat: 'Bearer', // I`ve tested not to use this field, but the result was the same
-    scheme: 'Bearer',
-    type: 'http', // I`ve attempted type: 'apiKey' too
-    in: 'Header'
-  }).build();
+  ).build();
+  // .addBearerAuth({ 
+  //   // I was also testing it without prefix 'Bearer ' before the JWT
+  //   description: `Please enter token in following format: Bearer <JWT>`,
+  //   name: 'Authorization',
+  //   bearerFormat: 'Bearer', // I`ve tested not to use this field, but the result was the same
+  //   scheme: 'Bearer',
+  //   type: 'http', // I`ve attempted type: 'apiKey' too
+  //   in: 'Header'
+  // }).build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  await app.listen(4040);
+  await app.listen(4041);
 }
 bootstrap();

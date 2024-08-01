@@ -3,7 +3,7 @@ import { Posto } from "src/types/Posto";
 
 export class GetSimuladorFiltersDto {
     @ApiProperty({ type: String })
-    Demanda: String;
+    TipoDemanda: String;
     
     @ApiProperty({ type: String })
     Ponto: String;
@@ -11,6 +11,9 @@ export class GetSimuladorFiltersDto {
     @ApiProperty({ type: String, enum: Posto })
     Posto: Posto;
     
-    @ApiProperty({ type: Date })
-    Data: Date;
+    @ApiProperty({ type: String })
+    Ano: string;
+
+    @ApiProperty({ type: String })
+    TipoContrato?: string;
 }
