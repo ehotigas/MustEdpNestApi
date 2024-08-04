@@ -74,10 +74,10 @@ export class SimuladorAdapter implements SimuladorAdapterInterface {
                 "simulador.Data as Data",
                 "simulador.TipoContrato as TipoContrato",
                 "sum(simulador.Demanda) as Demanda",
-                "sum(simulador.Piu) as Piu",
-                "sum(simulador.Add) as [Add]",
-                "sum(simulador.Pis) as Pis",
-                "sum(simulador.Eust) as Eust",
+                "sum(simulador.Piu)/1000000 as Piu",
+                "sum(simulador.Add)/1000000 as [Add]",
+                "sum(simulador.Pis)/1000000 as Pis",
+                "sum(simulador.Eust)/1000000 as Eust",
             ]);
             query = query.orderBy("Data", "ASC");
             return await query.getRawMany();
