@@ -1,13 +1,13 @@
 import { Body, Controller, Inject, Post, Query, ValidationPipe } from "@nestjs/common";
+import { GetPenalidadeChartDataDto } from "./dto/GetPenalidadeChartDataDto";
+import { ApiBody, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { GetDemandaChartDataDto } from "./dto/GetDemandaChartDataDto";
 import { GetSimuladorFiltersDto } from "./dto/GetSimuladorFiltersDto";
-import { ApiBody, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { SimuladorServiceInterface } from "./SimuladorService";
 import { GetSimuladorDto } from "./dto/GetSimuladorDto";
 import { RequestError } from "src/types/RequestError";
-import { Providers } from "src/Providers";
 import { Penalidade } from "src/types/Penalidade";
-import { GetPenalidadeChartDataDto } from "./dto/GetPenalidadeChartDataDto";
+import { Providers } from "src/Providers";
 
 @Controller("/simulador")
 @ApiTags("Simulador")
