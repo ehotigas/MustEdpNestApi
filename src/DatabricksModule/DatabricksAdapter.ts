@@ -27,11 +27,12 @@ export class DatabricksAdapter implements DatabricksAdapterInterface {
         return await axios(
             `${this.url}${uri}`,
             {
+                ...init,
                 headers: {
                     Authorization: `Bearer ${this.token}`,
                     ...init.headers || {  }
                 },
-                data: data
+                data: data,
             }
         );
     }

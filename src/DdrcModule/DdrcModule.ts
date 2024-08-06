@@ -1,7 +1,15 @@
-import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { Simulador } from "./Simulador/Simulador";
+import { ConfiabilidadeModule } from "./Confiabilidade/ConfiabilidadeModule";
+import { Confiabilidade } from "./Confiabilidade/Confiabilidade";
 import { SimuladorModule } from "./Simulador/SimuladorModule";
+import { ContratoModule } from "./Contrato/ContratoModule";
+import { DemandaModule } from "./Demanda/DemandaModule";
+import { TarifaModule } from "./Tarifa/TarifaModule";
+import { Simulador } from "./Simulador/Simulador";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Contrato } from "./Contrato/Contrato";
+import { Demanda } from "./Demanda/Demanda";
+import { Tarifa } from "./Tarifa/Tarifa";
+import { Module } from "@nestjs/common";
 
 @Module({
     imports: [
@@ -12,9 +20,9 @@ import { SimuladorModule } from "./Simulador/SimuladorModule";
         username: 'usrDerp',
         password: 'X:Ztt,WQ?aQ5zyHJ',
         database: 'derp',
-        // entities: [ LimiteTensao ],
+        // entities: [  ],
         entities: [
-          Simulador
+          Confiabilidade, Contrato, Demanda, Simulador, Tarifa
         ],
         options: {
           encrypt: true,
@@ -22,7 +30,11 @@ import { SimuladorModule } from "./Simulador/SimuladorModule";
         },
         // synchronize: true
       }),
-      SimuladorModule
+      ConfiabilidadeModule,
+      ContratoModule,
+      DemandaModule,
+      SimuladorModule,
+      TarifaModule
     ],
     controllers: [],
     providers: [],

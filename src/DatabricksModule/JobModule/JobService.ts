@@ -18,7 +18,6 @@ export class JobService implements JobServiceInterface {
     ) {  }
     
     public async run(input: RunJobRequestDto): Promise<RunJobResponseDto | RequestError> {
-        console.log("teste");
         try {
             const req = await this.adapter.fetch(
                 "/api/2.1/jobs/run-now",
@@ -27,11 +26,10 @@ export class JobService implements JobServiceInterface {
                     data: JSON.stringify(input)
                 }
             );
-            console.log("teste2");
             if (!req.status.toString().startsWith('2')) {
                 return new RequestError(req.statusText, req.status);
             }
-            return await req.data() as RunJobResponseDto;
+            return await req.data as RunJobResponseDto;
         } catch(error) {
             console.error(error);
             return new RequestError(error.message);
