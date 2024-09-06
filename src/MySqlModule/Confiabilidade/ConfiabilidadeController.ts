@@ -1,8 +1,8 @@
 import { CreateManyConfiabilidadeDto } from "./dto/CreateManyConfiabilidadeDto";
-import { ConfiabilidadeServiceInterface } from "./ConfiabilidadeService";
 import { CreateConfiabilidadeDto } from "./dto/CreateConfiabilidadeDto";
 import { UpdateConfiabilidadeDto } from "./dto/UpdateConfiabilidadeDto";
 import { GetConfiabilidadeDto } from "./dto/GetConfiabilidadeDto";
+import { IConfiabilidadeService } from "./ConfiabilidadeService";
 import { Confiabilidade } from "./Confiabilidade";
 import { Providers } from "src/Providers";
 import { Region } from "src/types/Region";
@@ -35,7 +35,7 @@ import {
 export class ConfiabilidadeController {
     public constructor(
         @Inject(Providers.CONFIABILIDADE_SERVICE)
-        private readonly service: ConfiabilidadeServiceInterface
+        private readonly service: IConfiabilidadeService
     ) {  }
 
     @Get("/")

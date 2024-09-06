@@ -1,9 +1,9 @@
 import { CreateManyContratoDto } from "./dto/CreateManyContratoDto";
-import { ContratoServiceInterface } from "./ContratoService";
 import { CreateContratoDto } from "./dto/CreateContratoDto";
 import { UpdateContratoDto } from "./dto/UpdateContratoDto";
 import { RequestError } from "src/types/RequestError";
 import { GetContratoDto } from "./dto/GetContratoDto";
+import { IContratoService } from "./ContratoService";
 import { Providers } from "src/Providers";
 import { Region } from "src/types/Region";
 import { Contrato } from "./Contrato";
@@ -19,7 +19,10 @@ import {
     Controller,
     Delete,
     Get,
+    HttpStatus,
     Inject,
+    InternalServerErrorException,
+    NotFoundException,
     Param,
     Patch,
     Post,
@@ -32,7 +35,7 @@ import {
 export class ContratoController {
     public constructor(
         @Inject(Providers.CONTRATO_SERVICE)
-        private readonly service: ContratoServiceInterface
+        private readonly service: IContratoService
     ) {  }
 
     @Get("/")
@@ -41,12 +44,12 @@ export class ContratoController {
         enum: Region
     })
     @ApiResponse({
-        status: 200,
+        status: HttpStatus.OK,
         type: GetContratoDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async getAll(
         @Query("region") region: Region
@@ -60,12 +63,16 @@ export class ContratoController {
         type: Number
     })
     @ApiResponse({
-        status: 200,
-        type: Contrato
+        status: HttpStatus.OK,
+        type: GetContratoDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.NOT_FOUND,
+        type: NotFoundException
+    })
+    @ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async get(
         @Param("id") id: number
@@ -76,12 +83,12 @@ export class ContratoController {
     @Post("/")
     @ApiBody({ type: CreateContratoDto })
     @ApiResponse({
-        status: 201,
+        status: HttpStatus.CREATED,
         type: Contrato
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async create(
         @Body(new ValidationPipe()) input: CreateContratoDto
@@ -92,12 +99,12 @@ export class ContratoController {
     @Post("/many")
     @ApiBody({ type: CreateManyContratoDto })
     @ApiResponse({
-        status: 201,
+        status: HttpStatus.CREATED,
         type: GetContratoDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async createMany(
         @Body(new ValidationPipe()) input: CreateManyContratoDto
@@ -113,12 +120,16 @@ export class ContratoController {
         type: Number
     })
     @ApiResponse({
-        status: 201,
-        type: Contrato
+        status: HttpStatus.CREATED,
+        type: GetContratoDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.NOT_FOUND,
+        type: NotFoundException
+    })
+    @ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async patch(
         @Param("id") id: number,
@@ -133,12 +144,16 @@ export class ContratoController {
         type: Number
     })
     @ApiResponse({
-        status: 204,
-        type: Contrato
+        status: HttpStatus.OK,
+        type: GetContratoDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.NOT_FOUND,
+        type: NotFoundException
+    })
+    @ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async delete(
         @Param("id") id: number
@@ -148,12 +163,12 @@ export class ContratoController {
 
     @Delete("/delete/all")
     @ApiResponse({
-        status: 204,
+        status: HttpStatus.OK,
         type: GetContratoDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async removeAll(): Promise<GetContratoDto | RequestError> {
         return await this.service.removeAll();

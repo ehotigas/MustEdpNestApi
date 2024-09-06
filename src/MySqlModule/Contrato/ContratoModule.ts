@@ -1,3 +1,4 @@
+import { LoggerModule } from "src/LoggerModule/LoggerModule";
 import { ContratoController } from "./ContratoController";
 import { ContratoAdapter } from "./ContratoAdapter";
 import { ContratoService } from "./ContratoService";
@@ -8,7 +9,8 @@ import { Contrato } from "./Contrato";
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([ Contrato ])
+        TypeOrmModule.forFeature([ Contrato ]),
+        LoggerModule
     ],
     controllers: [ ContratoController ],
     providers: [

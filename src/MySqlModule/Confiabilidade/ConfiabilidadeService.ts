@@ -1,15 +1,15 @@
 import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
 import { CreateManyConfiabilidadeDto } from "./dto/CreateManyConfiabilidadeDto";
-import { ConfiabilidadeAdapterInterface } from "./ConfiabilidadeAdapter";
 import { CreateConfiabilidadeDto } from "./dto/CreateConfiabilidadeDto";
 import { UpdateConfiabilidadeDto } from "./dto/UpdateConfiabilidadeDto";
 import { GetConfiabilidadeDto } from "./dto/GetConfiabilidadeDto";
+import { IConfiabilidadeAdapter } from "./ConfiabilidadeAdapter";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { Confiabilidade } from "./Confiabilidade";
 import { Region } from "src/types/Region";
 import { Providers } from "src/Providers";
 
-export interface ConfiabilidadeServiceInterface {
+export interface IConfiabilidadeService {
     /**
      * @async
      * @param {Region} region
@@ -72,11 +72,11 @@ export interface ConfiabilidadeServiceInterface {
 }
 
 @Injectable()
-export class ConfiabilidadeService implements ConfiabilidadeServiceInterface {
+export class ConfiabilidadeService implements IConfiabilidadeService {
     private readonly logger: Logger;
     public constructor(
         @Inject(Providers.CONFIABILIDADE_ADAPTER)
-        private readonly adapter: ConfiabilidadeAdapterInterface,
+        private readonly adapter: IConfiabilidadeAdapter,
         @Inject(Providers.LOGGER_FACTORY)
         loggerFactory: ILoggerFactory
     ) {
@@ -146,7 +146,7 @@ export class ConfiabilidadeService implements ConfiabilidadeServiceInterface {
         const result = [];
         const lines = [...spLines, ...esLines];
         lines.forEach(async (element) => {
-            const removeResult = await this.adapter.remove(element);
+            const removeResult = await this.adapter.remove(element.Id);
             result.push(removeResult);
         });
 

@@ -6,7 +6,7 @@ import { Providers } from "src/Providers";
 import { Region } from "src/types/Region";
 import { Repository } from "typeorm";
 
-export interface ConfiabilidadeAdapterInterface {
+export interface IConfiabilidadeAdapter {
     /**
      * @async
      * @param {Region} region 
@@ -47,18 +47,10 @@ export interface ConfiabilidadeAdapterInterface {
      * @throws {InternalServerErrorException}
      */
     remove(id: number): Promise<Confiabilidade | null>
-
-    /**
-     * @async
-     * @param {Confiabilidade} confiabilidade 
-     * @returns {Promise<Confiabilidade | null>}
-     * @throws {InternalServerErrorException}
-     */
-    remove(confiabilidade: Confiabilidade): Promise<Confiabilidade | null>
 }
 
 @Injectable()
-export class ConfiabilidadeAdapter implements ConfiabilidadeAdapterInterface {
+export class ConfiabilidadeAdapter implements IConfiabilidadeAdapter {
     private readonly logger: Logger;
     public constructor(
         @InjectRepository(Confiabilidade)
@@ -119,17 +111,11 @@ export class ConfiabilidadeAdapter implements ConfiabilidadeAdapterInterface {
         }
     }
 
-    public async remove(id: number | Confiabilidade): Promise<Confiabilidade | null> {
+    public async remove(id: number): Promise<Confiabilidade | null> {
         try {
-            let record: Confiabilidade;
-            if (typeof id === "number" || typeof id === "string") {
-                record = await this.repository.findOne({
-                    where: { Id: id }
-                });
-            }
-            else {
-                record = id;
-            }
+            const record = await this.repository.findOne({
+                where: { Id: id }
+            });
             return await this.repository.remove(record);
         }
         catch (error) {

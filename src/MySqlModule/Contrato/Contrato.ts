@@ -10,25 +10,22 @@ export class Contrato {
     Id: number;
     
     @ApiProperty({ type: String })
-    @Column({ type: String })
+    @Column({ type: String, nullable: true })
     Ponto: string;
     
     @ApiProperty({
         type: String,
         enum: Posto
     })
-    @Column({
-        type: String,
-        enum: Posto
-    })
+    @Column({ type: String, nullable: true })
     Posto: Posto;
     
     @ApiProperty({ type: Date })
-    @Column({ type: Date })
+    @Column({ type: Date, nullable: true })
     Data: Date;
 
     @ApiProperty({ type: String })
-    @Column({ type: String })
+    @Column({ type: String, nullable: true })
     TipoContrato: string;
     
     @ApiProperty({ type: Number })
@@ -39,9 +36,16 @@ export class Contrato {
         type: String,
         enum: Region
     })
-    @Column({
-        type: String,
-        enum: Region
-    })
+    @Column({ type: String, nullable: true })
     Empresa: Region;
+
+    public constructor(contrato?: Partial<Contrato>) {
+        this.Id = contrato?.Id;
+        this.Ponto = contrato?.Ponto;
+        this.Posto = contrato?.Posto;
+        this.Data = contrato?.Data;
+        this.TipoContrato = contrato?.TipoContrato;
+        this.Contrato = contrato?.Contrato;
+        this.Empresa = contrato?.Empresa;
+    }
 }
