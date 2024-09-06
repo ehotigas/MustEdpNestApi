@@ -3,32 +3,29 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Region } from "src/types/Region";
 import { Posto } from "src/types/Posto";
 
-@Entity("Mercado.Demanda")
+@Entity("Demanda")
 export class Demanda {
     @ApiProperty({ type: Number })
     @PrimaryGeneratedColumn()
     Id: number;
     
     @ApiProperty({ type: String })
-    @Column({ type: String })
+    @Column({ type: String, nullable: true })
     Ponto: string;
     
     @ApiProperty({
         type: String,
         enum: Posto
     })
-    @Column({
-        type: String,
-        enum: Posto
-    })
+    @Column({ type: String, nullable: true })
     Posto: Posto;
     
     @ApiProperty({ type: Date })
-    @Column({ type: Date })
+    @Column({ type: Date, nullable: true })
     Data: Date;
 
     @ApiProperty({ type: String })
-    @Column({ type: String })
+    @Column({ type: String, nullable: true })
     TipoDemanda: string;
     
     @ApiProperty({ type: Number })
@@ -39,9 +36,16 @@ export class Demanda {
         type: String,
         enum: Region
     })
-    @Column({
-        type: String,
-        enum: Region
-    })
+    @Column({ type: String, nullable: true })
     Empresa: Region;
+
+    public constructor(demanda?: Partial<Demanda>) {
+        this.Id = demanda?.Id;
+        this.Ponto = demanda?.Ponto;
+        this.Posto = demanda?.Posto;
+        this.Data = demanda?.Data;
+        this.TipoDemanda = demanda?.TipoDemanda;
+        this.Demanda = demanda?.Demanda;
+        this.Empresa = demanda?.Empresa;
+    }
 }

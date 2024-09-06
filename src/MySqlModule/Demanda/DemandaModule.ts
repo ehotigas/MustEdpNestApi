@@ -1,3 +1,4 @@
+import { LoggerModule } from "src/LoggerModule/LoggerModule";
 import { DemandaController } from "./DemandaController";
 import { DemandaAdapter } from "./DemandaAdapter";
 import { DemandaService } from "./DemandaService";
@@ -8,7 +9,8 @@ import { Demanda } from "./Demanda";
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([ Demanda ])
+        TypeOrmModule.forFeature([ Demanda ]),
+        LoggerModule
     ],
     controllers: [ DemandaController ],
     providers: [

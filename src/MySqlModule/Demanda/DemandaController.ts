@@ -2,7 +2,6 @@ import { CreateManyDemandaDto } from "./dto/CreateManyDemandaDto";
 import { DemandaServiceInterface } from "./DemandaService";
 import { CreateDemandaDto } from "./dto/CreateDemandaDto";
 import { UpdateDemandaDto } from "./dto/UpdateDemandaDto";
-import { RequestError } from "src/types/RequestError";
 import { GetDemandaDto } from "./dto/GetDemandaDto";
 import { Providers } from "src/Providers";
 import { Region } from "src/types/Region";
@@ -19,7 +18,10 @@ import {
     Controller,
     Delete,
     Get,
+    HttpStatus,
     Inject,
+    InternalServerErrorException,
+    NotFoundException,
     Param,
     Patch,
     Post,
@@ -41,16 +43,16 @@ export class DemandaController {
         enum: Region
     })
     @ApiResponse({
-        status: 200,
+        status: HttpStatus.OK,
         type: GetDemandaDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async getAll(
         @Query("region") region: Region
-    ): Promise<GetDemandaDto | RequestError> {
+    ): Promise<GetDemandaDto> {
         return await this.service.findAll(region);
     }
 
@@ -60,48 +62,52 @@ export class DemandaController {
         type: Number
     })
     @ApiResponse({
-        status: 200,
+        status: HttpStatus.OK,
         type: Demanda
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.NOT_FOUND,
+        type: NotFoundException
+    })
+    @ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async get(
         @Param("id") id: number
-    ): Promise<Demanda | RequestError> {
+    ): Promise<Demanda> {
         return await this.service.find(id);
     }
 
     @Post("/")
     @ApiBody({ type: CreateDemandaDto })
     @ApiResponse({
-        status: 201,
+        status: HttpStatus.CREATED,
         type: Demanda
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async create(
         @Body(new ValidationPipe()) input: CreateDemandaDto
-    ): Promise<Demanda | RequestError> {
+    ): Promise<Demanda> {
         return await this.service.save(input);
     }
 
     @Post("/many")
     @ApiBody({ type: CreateManyDemandaDto })
     @ApiResponse({
-        status: 201,
+        status: HttpStatus.CREATED,
         type: GetDemandaDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async createMany(
         @Body(new ValidationPipe()) input: CreateManyDemandaDto
-    ): Promise<GetDemandaDto | RequestError> {
+    ): Promise<GetDemandaDto> {
         return await this.service.saveMany(input);
     }
 
@@ -113,17 +119,21 @@ export class DemandaController {
         type: Number
     })
     @ApiResponse({
-        status: 201,
+        status: HttpStatus.CREATED,
         type: Demanda
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.NOT_FOUND,
+        type: NotFoundException
+    })
+    @ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async patch(
         @Param("id") id: number,
         @Body(new ValidationPipe()) input: UpdateDemandaDto
-    ): Promise<Demanda | RequestError> {
+    ): Promise<Demanda> {
         return await this.service.update(id, input);
     }
 
@@ -133,29 +143,33 @@ export class DemandaController {
         type: Number
     })
     @ApiResponse({
-        status: 204,
+        status: HttpStatus.OK,
         type: Demanda
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.NOT_FOUND,
+        type: NotFoundException
+    })
+    @ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async delete(
         @Param("id") id: number
-    ): Promise<Demanda | RequestError> {
+    ): Promise<Demanda> {
         return await this.service.remove(id);
     }
 
     @Delete("/delete/all")
     @ApiResponse({
-        status: 204,
+        status: HttpStatus.OK,
         type: GetDemandaDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
-    public async removeAll(): Promise<GetDemandaDto | RequestError> {
+    public async removeAll(): Promise<GetDemandaDto> {
         return await this.service.removeAll();
     }
 }

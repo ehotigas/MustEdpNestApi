@@ -3,7 +3,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Region } from "src/types/Region";
 import { Posto } from "src/types/Posto";
 
-@Entity("Mercado.Contrato")
+@Entity("Contrato")
 export class Contrato {
     @ApiProperty({ type: Number })
     @PrimaryGeneratedColumn()
