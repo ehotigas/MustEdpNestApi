@@ -1,9 +1,8 @@
 import { CreateManyTarifaDto } from "./dto/CreateManyTarifaDto";
-import { TarifaServiceInterface } from "./TarifaService";
 import { CreateTarifaDto } from "./dto/CreateTarifaDto";
 import { UpdateTarifaDto } from "./dto/UpdateTarifaDto";
-import { RequestError } from "src/types/RequestError";
 import { GetTarifaDto } from "./dto/GetTarifaDto";
+import { ITarifaService } from "./TarifaService";
 import { Providers } from "src/Providers";
 import { Region } from "src/types/Region";
 import { Tarifa } from "./Tarifa";
@@ -19,7 +18,10 @@ import {
     Controller,
     Delete,
     Get,
+    HttpStatus,
     Inject,
+    InternalServerErrorException,
+    NotFoundException,
     Param,
     Patch,
     Post,
@@ -32,7 +34,7 @@ import {
 export class TarifaController {
     public constructor(
         @Inject(Providers.TARIFA_SERVICE)
-        private readonly service: TarifaServiceInterface
+        private readonly service: ITarifaService
     ) {  }
 
     @Get("/")
@@ -41,16 +43,16 @@ export class TarifaController {
         enum: Region
     })
     @ApiResponse({
-        status: 200,
+        status: HttpStatus.OK,
         type: GetTarifaDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async getAll(
         @Query("region") region: Region
-    ): Promise<GetTarifaDto | RequestError> {
+    ): Promise<GetTarifaDto> {
         return await this.service.findAll(region);
     }
 
@@ -60,48 +62,52 @@ export class TarifaController {
         type: Number
     })
     @ApiResponse({
-        status: 200,
+        status: HttpStatus.OK,
         type: Tarifa
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.NOT_FOUND,
+        type: NotFoundException
+    })
+    @ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async get(
         @Param("id") id: number
-    ): Promise<Tarifa | RequestError> {
+    ): Promise<Tarifa> {
         return await this.service.find(id);
     }
 
     @Post("/")
     @ApiBody({ type: CreateTarifaDto })
     @ApiResponse({
-        status: 201,
+        status: HttpStatus.CREATED,
         type: Tarifa
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async create(
         @Body(new ValidationPipe()) input: CreateTarifaDto
-    ): Promise<Tarifa | RequestError> {
+    ): Promise<Tarifa> {
         return await this.service.save(input);
     }
 
     @Post("/many")
     @ApiBody({ type: CreateManyTarifaDto })
     @ApiResponse({
-        status: 201,
+        status: HttpStatus.CREATED,
         type: GetTarifaDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async createMany(
         @Body(new ValidationPipe()) input: CreateManyTarifaDto
-    ): Promise<GetTarifaDto | RequestError> {
+    ): Promise<GetTarifaDto> {
         return await this.service.saveMany(input);
     }
 
@@ -113,17 +119,21 @@ export class TarifaController {
         type: Number
     })
     @ApiResponse({
-        status: 201,
+        status: HttpStatus.CREATED,
         type: Tarifa
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.NOT_FOUND,
+        type: NotFoundException
+    })
+    @ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async patch(
         @Param("id") id: number,
         @Body(new ValidationPipe()) input: UpdateTarifaDto
-    ): Promise<Tarifa | RequestError> {
+    ): Promise<Tarifa> {
         return await this.service.update(id, input);
     }
 
@@ -133,29 +143,33 @@ export class TarifaController {
         type: Number
     })
     @ApiResponse({
-        status: 204,
+        status: HttpStatus.OK,
         type: Tarifa
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.NOT_FOUND,
+        type: NotFoundException
+    })
+    @ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async delete(
         @Param("id") id: number
-    ): Promise<Tarifa | RequestError> {
+    ): Promise<Tarifa> {
         return await this.service.remove(id);
     }
 
     @Delete("/delete/all")
     @ApiResponse({
-        status: 204,
+        status: HttpStatus.OK,
         type: GetTarifaDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
-    public async removeAll(): Promise<GetTarifaDto | RequestError> {
+    public async removeAll(): Promise<GetTarifaDto> {
         return await this.service.removeAll();
     }
 }

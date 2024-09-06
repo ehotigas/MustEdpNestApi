@@ -1,3 +1,4 @@
+import { LoggerModule } from "src/LoggerModule/LoggerModule";
 import { TarifaController } from "./TarifaController";
 import { TarifaAdapter } from "./TarifaAdapter";
 import { TarifaService } from "./TarifaService";
@@ -8,7 +9,8 @@ import { Tarifa } from "./Tarifa";
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([ Tarifa ])
+        TypeOrmModule.forFeature([ Tarifa ]),
+        LoggerModule
     ],
     controllers: [ TarifaController ],
     providers: [

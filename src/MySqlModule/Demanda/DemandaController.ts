@@ -1,8 +1,8 @@
 import { CreateManyDemandaDto } from "./dto/CreateManyDemandaDto";
-import { DemandaServiceInterface } from "./DemandaService";
 import { CreateDemandaDto } from "./dto/CreateDemandaDto";
 import { UpdateDemandaDto } from "./dto/UpdateDemandaDto";
 import { GetDemandaDto } from "./dto/GetDemandaDto";
+import { IDemandaService } from "./DemandaService";
 import { Providers } from "src/Providers";
 import { Region } from "src/types/Region";
 import { Demanda } from "./Demanda";
@@ -34,7 +34,7 @@ import {
 export class DemandaController {
     public constructor(
         @Inject(Providers.DEMANDA_SERVICE)
-        private readonly service: DemandaServiceInterface
+        private readonly service: IDemandaService
     ) {  }
 
     @Get("/")

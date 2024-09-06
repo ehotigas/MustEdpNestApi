@@ -6,7 +6,7 @@ import { Region } from "src/types/Region";
 import { Repository } from "typeorm";
 import { Demanda } from "./Demanda";
 
-export interface DemandaAdapterInterface {
+export interface IDemandaAdapter {
     /**
      * @async
      * @param {Region} region 
@@ -50,7 +50,7 @@ export interface DemandaAdapterInterface {
 }
 
 @Injectable()
-export class DemandaAdapter implements DemandaAdapterInterface {
+export class DemandaAdapter implements IDemandaAdapter {
     private readonly logger: Logger;
     public constructor(
         @InjectRepository(Demanda)

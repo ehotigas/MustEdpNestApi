@@ -1,15 +1,15 @@
 import { Inject, Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
 import { CreateManyDemandaDto } from "./dto/CreateManyDemandaDto";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
-import { DemandaAdapterInterface } from "./DemandaAdapter";
 import { CreateDemandaDto } from "./dto/CreateDemandaDto";
 import { UpdateDemandaDto } from "./dto/UpdateDemandaDto";
 import { GetDemandaDto } from "./dto/GetDemandaDto";
+import { IDemandaAdapter } from "./DemandaAdapter";
 import { Region } from "src/types/Region";
 import { Providers } from "src/Providers";
 import { Demanda } from "./Demanda";
 
-export interface DemandaServiceInterface {
+export interface IDemandaService {
     /**
      * @async
      * @param {Region} region 
@@ -71,11 +71,11 @@ export interface DemandaServiceInterface {
 }
 
 @Injectable()
-export class DemandaService implements DemandaServiceInterface {
+export class DemandaService implements IDemandaService {
     private readonly logger: Logger;
     public constructor(
         @Inject(Providers.DEMANDA_ADAPTER)
-        private readonly adapter: DemandaAdapterInterface,
+        private readonly adapter: IDemandaAdapter,
         @Inject(Providers.LOGGER_FACTORY)
         loggerFactory: ILoggerFactory
     ) {
