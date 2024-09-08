@@ -1,11 +1,10 @@
-import { Body, Controller, Inject, Post, Query, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Delete, HttpStatus, Inject, InternalServerErrorException, Post, Query, ValidationPipe } from "@nestjs/common";
 import { GetPenalidadeChartDataDto } from "./dto/GetPenalidadeChartDataDto";
 import { ApiBody, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { GetDemandaChartDataDto } from "./dto/GetDemandaChartDataDto";
 import { GetSimuladorFiltersDto } from "./dto/GetSimuladorFiltersDto";
-import { SimuladorServiceInterface } from "./SimuladorService";
 import { GetSimuladorDto } from "./dto/GetSimuladorDto";
-import { RequestError } from "src/types/RequestError";
+import { ISimuladorService } from "./SimuladorService";
 import { Penalidade } from "src/types/Penalidade";
 import { Providers } from "src/Providers";
 
@@ -14,38 +13,38 @@ import { Providers } from "src/Providers";
 export class SimuladorController {
     public constructor(
         @Inject(Providers.SIMULADOR_SERVICE)
-        private readonly service: SimuladorServiceInterface
+        private readonly service: ISimuladorService
     ) {  }
 
     @Post("/")
     @ApiBody({ type: GetSimuladorFiltersDto })
     @ApiResponse({
-        status: 201,
+        status: HttpStatus.OK,
         type: GetSimuladorDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async getAll(
         @Body(new ValidationPipe()) input: GetSimuladorFiltersDto
-    ): Promise<GetSimuladorDto | RequestError> {
+    ): Promise<GetSimuladorDto> {
         return await this.service.findAll(input);
     }
 
     @Post("/demanda-data")
     @ApiBody({ type: GetSimuladorFiltersDto })
     @ApiResponse({
-        status: 201,
+        status: HttpStatus.OK,
         type: GetDemandaChartDataDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async getDemandaChartData(
         @Body(new ValidationPipe()) input: GetSimuladorFiltersDto
-    ): Promise<GetDemandaChartDataDto | RequestError> {
+    ): Promise<GetDemandaChartDataDto> {
         return await this.service.findDemandaChartData(input);
     }
 
@@ -56,17 +55,43 @@ export class SimuladorController {
     })
     @ApiBody({ type: GetSimuladorFiltersDto })
     @ApiResponse({
-        status: 201,
+        status: HttpStatus.OK,
         type: GetPenalidadeChartDataDto
     })
     @ApiResponse({
-        status: 500,
-        type: RequestError
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
     })
     public async getPenalidadeChartData(
         @Body(new ValidationPipe()) filter: GetSimuladorFiltersDto,
         @Query("penalidade") penalidade: Penalidade
-    ): Promise<GetPenalidadeChartDataDto | RequestError> {
+    ): Promise<GetPenalidadeChartDataDto> {
         return this.service.findPenalidadeChartData(filter, penalidade);
+    }
+
+    @Post("/generate")
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: GetSimuladorDto
+    })
+    @ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
+    })
+    public async generate(): Promise<GetSimuladorDto> {
+        return await this.service.generate();
+    }
+
+    @Delete("/")
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: GetSimuladorDto
+    })
+    @ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
+    })
+    public async deleteAll(): Promise<GetSimuladorDto> {
+        return await this.service.removeAll();
     }
 }

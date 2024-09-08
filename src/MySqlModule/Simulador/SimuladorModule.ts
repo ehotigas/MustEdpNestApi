@@ -1,3 +1,4 @@
+import { LoggerModule } from "src/LoggerModule/LoggerModule";
 import { SimuladorController } from "./SimuladorController";
 import { SimuladorAdapter } from "./SimuladorAdapter";
 import { SimuladorService } from "./SimuladorService";
@@ -8,7 +9,8 @@ import { Simulador } from "./Simulador";
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([ Simulador ])
+        TypeOrmModule.forFeature([ Simulador ]),
+        LoggerModule
     ],
     controllers: [ SimuladorController ],
     providers: [

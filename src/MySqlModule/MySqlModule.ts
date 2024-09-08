@@ -1,7 +1,15 @@
-import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfiabilidadeModule } from "./Confiabilidade/ConfiabilidadeModule";
 import { Confiabilidade } from "./Confiabilidade/Confiabilidade";
+import { SimuladorModule } from "./Simulador/SimuladorModule";
+import { ContratoModule } from "./Contrato/ContratoModule";
+import { DemandaModule } from "./Demanda/DemandaModule";
+import { TarifaModule } from "./Tarifa/TarifaModule";
+import { Simulador } from "./Simulador/Simulador";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Contrato } from "./Contrato/Contrato";
+import { Demanda } from "./Demanda/Demanda";
+import { Tarifa } from "./Tarifa/Tarifa";
+import { Module } from "@nestjs/common";
 
 @Module({
     imports: [
@@ -13,11 +21,15 @@ import { Confiabilidade } from "./Confiabilidade/Confiabilidade";
             password: 'root',
             database: 'edp',
             entities: [
-                Confiabilidade
+                Confiabilidade, Contrato, Demanda, Simulador, Tarifa
             ],
             // synchronize: true,
         }),
-        ConfiabilidadeModule
+        ConfiabilidadeModule,
+        ContratoModule,
+        DemandaModule,
+        SimuladorModule,
+        TarifaModule
     ]
 })
 export class MySqlModule {
