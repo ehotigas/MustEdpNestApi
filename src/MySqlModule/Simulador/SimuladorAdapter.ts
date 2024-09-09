@@ -158,49 +158,58 @@ export class SimuladorAdapter implements ISimuladorAdapter {
     public async generate(): Promise<Simulador[]> {
         try {
             return await this.repository.query(`
-                insert into Simulador (Data, Ponto, Posto, TipoDemanda, Demanda, TipoContrato, Contrato, Tarifa, Confiabilidade, Piu, \`Add\`, Pis, Eust)
+                insert into Simulador (Data, Ponto, Posto, TipoDemanda, Demanda, TipoContrato, Contrato, TarifaDra, TarifaDrp, Confiabilidade, Piu, \`Add\`, Pis, Eust, Dra, Drp)
                 with BaseMust as (
-                select
-                    A.*,
-                    B.TipoContrato,
-                    B.Contrato,
-                    C.Tarifa,
-                    D.Confiabilidade
-                from Demanda A
-                    inner join Contrato B on (
-                    A.Ponto = B.Ponto and
-                    A.Posto = B.Posto and
-                    A.Data = B.Data
-                    )
-                    inner join Tarifa C on (
-                    A.Ponto = C.Ponto and
-                    A.Posto = C.Posto and
-                    A.Data = C.Data
-                    )
-                    inner join Confiabilidade D on (
-                    A.Ponto = D.Ponto and
-                    A.Posto = D.Posto and
-                    A.Data = D.Data
+                    select
+                        A.*,
+                        B.TipoContrato,
+                        B.Contrato,
+                        C.TarifaDra,
+                        C.TarifaDrp,
+                        D.Confiabilidade,
+                        E.Contrato as ContratoOrcado
+                    from Demanda A
+                        inner join Contrato B on (
+                        A.Ponto = B.Ponto and
+                        A.Posto = B.Posto and
+                        A.Data = B.Data and
+                        B.TipoContrato != 'Contrato Orçado'
+                        )
+                        inner join Tarifa C on (
+                        A.Ponto = C.Ponto and
+                        A.Posto = C.Posto and
+                        A.Data = C.Data
+                        )
+                        inner join Confiabilidade D on (
+                        A.Ponto = D.Ponto and
+                        A.Posto = D.Posto and
+                        A.Data = D.Data
+                        )
+                        inner join Contrato E on (
+                        A.Ponto = E.Ponto and
+                        A.Posto = E.Posto and
+                        A.Data = E.Data and
+                        E.TipoContrato = 'Contrato Orçado'
                     )
                 ),
                 Pis as (
-                select
-                    substring(Data, 1, 4) Ano,
-                    Ponto,
-                    Posto,
-                    TipoDemanda,
-                    TipoContrato,
-                    case
-                    when max(Demanda) >= max(Contrato)*0.9 - max(Confiabilidade) then 0
-                    else (max(Contrato)*0.9 - max(Confiabilidade) - max(Demanda)) * 12 * max(Tarifa)
-                    end as Pis
-                from BaseMust
-                    group by
-                    substring(Data, 1, 4),
-                    Ponto,
-                    Posto,
-                    TipoDemanda,
-                    TipoContrato
+                    select
+                        substring(Data, 1, 4) Ano,
+                        Ponto,
+                        Posto,
+                        TipoDemanda,
+                        TipoContrato,
+                        case
+                        when max(Demanda) >= max(Contrato)*0.9 - max(Confiabilidade) then 0
+                        else (max(Contrato)*0.9 - max(Confiabilidade) - max(Demanda)) * 12 * max(TarifaDrp)
+                        end as Pis
+                    from BaseMust
+                        group by
+                            substring(Data, 1, 4),
+                            Ponto,
+                            Posto,
+                            TipoDemanda,
+                            TipoContrato
                 )
 
                 select
@@ -211,18 +220,21 @@ export class SimuladorAdapter implements ISimuladorAdapter {
                     A.Demanda,
                     A.TipoContrato,
                     A.Contrato,
-                    A.Tarifa,
+                    A.TarifaDra,
+                    A.TarifaDrp,
                     A.Confiabilidade,
                     case
-                        when Demanda > Contrato*1.1 then (Demanda - Contrato * 1.1) * 3 * Tarifa
+                        when Demanda > Contrato*1.1 then (Demanda - Contrato * 1.1) * 3 * TarifaDrp
                         else 0
                     end as Piu,
                     case
-                        when Demanda > Contrato then (Demanda - Contrato) * Tarifa
+                        when Demanda > Contrato then (Demanda - Contrato) * TarifaDrp
                         else 0
                     end as \`Add\`,
                     coalesce(B.Pis, 0) as Pis,
-                    Tarifa * Contrato as Eust
+                    TarifaDrp * Contrato as Eust,
+                    TarifaDra * ContratoOrcado as Dra,
+                    TarifaDrp * ContratoOrcado as Drp
                 from BaseMust A
                     left join Pis B on (
                         A.Ponto = B.Ponto and

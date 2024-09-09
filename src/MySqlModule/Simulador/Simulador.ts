@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { ApiProperty } from "@nestjs/swagger";
 
 @Entity("Simulador")
 export class Simulador {
@@ -58,4 +58,12 @@ export class Simulador {
     @ApiProperty({ type: Number })
     @Column({ type: Number })
     Eust: number;
+
+    @ApiProperty({ type: Number })
+    @Column({ type: Number })
+    Dra: number;
+
+    @ApiProperty({ type: Number })
+    @Column({ type: Number })
+    Drp: number; 
 }

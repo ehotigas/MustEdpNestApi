@@ -16,7 +16,10 @@ export class CreateTarifaDto {
     Data: Date;
     
     @ApiProperty({ type: Number })
-    Tarifa: number;
+    TarifaDra: number;
+
+    @ApiProperty({ type: Number })
+    TarifaDrp: number; // Tarifa
     
     @ApiProperty({
         type: String,

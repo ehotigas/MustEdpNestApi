@@ -26,7 +26,11 @@ export class Tarifa {
     
     @ApiProperty({ type: Number })
     @Column({ type: Number, nullable: true })
-    Tarifa: number;
+    TarifaDra: number;
+
+    @ApiProperty({ type: Number })
+    @Column({ type: Number, nullable: true })
+    TarifaDrp: number; // Tarifa
     
     @ApiProperty({
         type: String,
