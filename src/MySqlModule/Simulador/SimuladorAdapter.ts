@@ -94,7 +94,7 @@ export class SimuladorAdapter implements ISimuladorAdapter {
                 "simulador.Tarifa as Tarifa",
                 "simulador.Confiabilidade as Confiabilidade",
                 "simulador.Piu as Piu",
-                "simulador.Add as Add",
+                "simulador.`Add` as `Add`",
                 "simulador.Pis as Pis",
                 "simulador.Eust as Eust",
             ]);
@@ -116,7 +116,7 @@ export class SimuladorAdapter implements ISimuladorAdapter {
                 "simulador.TipoContrato as TipoContrato",
                 "sum(simulador.Demanda) as Demanda",
                 "sum(simulador.Piu)/1000000 as Piu",
-                "sum(simulador.Add)/1000000 as Add",
+                "sum(simulador.`Add`)/1000000 as `Add`",
                 "sum(simulador.Pis)/1000000 as Pis",
                 "sum(simulador.Eust)/1000000 as Eust",
             ]);
@@ -136,7 +136,7 @@ export class SimuladorAdapter implements ISimuladorAdapter {
             if (penalidade === Penalidade.TODAS) {
                 arr = [
                     "sum(simulador.Piu)/1000000 as Piu",
-                    "sum(simulador.Add)/1000000 as Add",
+                    "sum(simulador.`Add`)/1000000 as `Add`",
                     "sum(simulador.Pis)/1000000 as Pis",
                     "sum(simulador.Eust)/1000000 as Eust"
                 ];
