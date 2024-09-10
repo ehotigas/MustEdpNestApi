@@ -24,7 +24,7 @@ export class Simulador {
     TipoDemanda: string;
 
     @ApiProperty({ type: Number })
-    @Column({ type: Number })
+    @Column({ type: 'float' })
     Demanda: number;
 
     @ApiProperty({ type: String })
@@ -32,38 +32,38 @@ export class Simulador {
     TipoContrato: string;
 
     @ApiProperty({ type: Number })
-    @Column({ type: Number })
+    @Column({ type: 'float' })
     Contrato: number;
 
     @ApiProperty({ type: Number })
-    @Column({ type: Number })
+    @Column({ type: 'float' })
     Tarifa: number;
 
     @ApiProperty({ type: Number })
-    @Column({ type: Number })
+    @Column({ type: 'float' })
     Confiabilidade: number;
 
     @ApiProperty({ type: Number })
-    @Column({ type: Number })
+    @Column({ type: 'float' })
     Piu: number;
 
     @ApiProperty({ type: Number })
-    @Column({ type: Number })
+    @Column({ type: 'float' })
     Add: number;
 
     @ApiProperty({ type: Number })
-    @Column({ type: Number })
+    @Column({ type: 'float' })
     Pis: number;
 
     @ApiProperty({ type: Number })
-    @Column({ type: Number })
+    @Column({ type: 'float' })
     Eust: number;
 
     @ApiProperty({ type: Number })
-    @Column({ type: Number })
+    @Column({ type: 'float' })
     Dra: number;
 
     @ApiProperty({ type: Number })
-    @Column({ type: Number })
+    @Column({ type: 'float' })
     Drp: number; 
 }

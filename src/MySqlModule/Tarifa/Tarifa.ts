@@ -25,11 +25,11 @@ export class Tarifa {
     Data: Date;
     
     @ApiProperty({ type: Number })
-    @Column({ type: Number, nullable: true })
+    @Column({ type: 'double', nullable: true })
     TarifaDra: number;
 
     @ApiProperty({ type: Number })
-    @Column({ type: Number, nullable: true })
+    @Column({ type: 'double', nullable: true })
     TarifaDrp: number; // Tarifa
     
     @ApiProperty({

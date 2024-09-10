@@ -29,7 +29,7 @@ export class Demanda {
     TipoDemanda: string;
     
     @ApiProperty({ type: Number })
-    @Column({ type: Number, nullable: true })
+    @Column({ type: 'float', nullable: true })
     Demanda: number;
     
     @ApiProperty({

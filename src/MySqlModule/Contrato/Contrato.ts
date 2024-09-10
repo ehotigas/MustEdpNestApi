@@ -29,7 +29,7 @@ export class Contrato {
     TipoContrato: string;
     
     @ApiProperty({ type: Number })
-    @Column({ type: Number, nullable: true })
+    @Column({ type: 'float', nullable: true })
     Contrato: number;
     
     @ApiProperty({
