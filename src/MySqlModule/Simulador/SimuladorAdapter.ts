@@ -6,8 +6,11 @@ import { Repository, SelectQueryBuilder } from "typeorm";
 import { DemandaChartData } from "./DemandaChartData";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Penalidade } from "src/types/Penalidade";
+import { SummaryData } from "./SummaryData";
 import { Providers } from "src/Providers";
+import { Region } from "src/types/Region";
 import { Simulador } from "./Simulador";
+import { GetSummaryFiltersDto } from "./dto/GetSummaryFiltersDto";
 
 export interface ISimuladorAdapter {
     /**
@@ -48,6 +51,14 @@ export interface ISimuladorAdapter {
      * @throws {InternalServerErrorException}
      */
     removeAll(): Promise<Simulador[]>;
+
+    /**
+     * @async
+     * @param {GetSummaryFiltersDto} filter
+     * @returns {Promise<SummaryData[]>}
+     * @throws {InternalServerErrorException}
+     */
+    getSummaryChart(filter: GetSummaryFiltersDto): Promise<SummaryData[]>;
 }
 
 @Injectable()
@@ -91,12 +102,14 @@ export class SimuladorAdapter implements ISimuladorAdapter {
                 "simulador.Demanda as Demanda",
                 "simulador.TipoContrato as TipoContrato",
                 "simulador.Contrato as Contrato",
-                "simulador.Tarifa as Tarifa",
+                "simulador.TarifaDrp as TarifaDrp",
+                "simulador.TarifaDra as TarifaDra",
                 "simulador.Confiabilidade as Confiabilidade",
                 "simulador.Piu as Piu",
                 "simulador.`Add` as `Add`",
                 "simulador.Pis as Pis",
                 "simulador.Eust as Eust",
+                "simulador.Empresa as Empresa",
             ]);
             return await query.getRawMany();
         }
@@ -158,7 +171,7 @@ export class SimuladorAdapter implements ISimuladorAdapter {
     public async generate(): Promise<Simulador[]> {
         try {
             return await this.repository.query(`
-                insert into Simulador (Data, Ponto, Posto, TipoDemanda, Demanda, TipoContrato, Contrato, TarifaDra, TarifaDrp, Confiabilidade, Piu, \`Add\`, Pis, Eust, Dra, Drp)
+                insert into Simulador (Data, Ponto, Posto, TipoDemanda, Demanda, TipoContrato, Contrato, TarifaDra, TarifaDrp, Confiabilidade, Piu, \`Add\`, Pis, Eust, Dra, Drp, Empresa)
                 with BaseMust as (
                     select
                         A.*,
@@ -170,26 +183,29 @@ export class SimuladorAdapter implements ISimuladorAdapter {
                         E.Contrato as ContratoOrcado
                     from Demanda A
                         inner join Contrato B on (
-                        A.Ponto = B.Ponto and
-                        A.Posto = B.Posto and
-                        A.Data = B.Data and
-                        B.TipoContrato != 'Contrato Orçado'
+                            A.Ponto = B.Ponto and
+                            A.Posto = B.Posto and
+                            A.Data = B.Data and
+                            A.Empresa = B.Empresa
                         )
                         inner join Tarifa C on (
-                        A.Ponto = C.Ponto and
-                        A.Posto = C.Posto and
-                        A.Data = C.Data
+                            A.Ponto = C.Ponto and
+                            A.Posto = C.Posto and
+                            A.Data = C.Data and
+                            A.Empresa = C.Empresa
                         )
                         inner join Confiabilidade D on (
-                        A.Ponto = D.Ponto and
-                        A.Posto = D.Posto and
-                        A.Data = D.Data
+                            A.Ponto = D.Ponto and
+                            A.Posto = D.Posto and
+                            A.Data = D.Data and
+                            A.Empresa = D.Empresa
                         )
                         inner join Contrato E on (
-                        A.Ponto = E.Ponto and
-                        A.Posto = E.Posto and
-                        A.Data = E.Data and
-                        E.TipoContrato = 'Contrato Orçado'
+                            A.Ponto = E.Ponto and
+                            A.Posto = E.Posto and
+                            A.Data = E.Data and
+                            A.Empresa = E.Empresa and
+                            E.TipoContrato = 'Orçado'
                     )
                 ),
                 Pis as (
@@ -199,9 +215,10 @@ export class SimuladorAdapter implements ISimuladorAdapter {
                         Posto,
                         TipoDemanda,
                         TipoContrato,
+                        Empresa,
                         case
-                        when max(Demanda) >= max(Contrato)*0.9 - max(Confiabilidade) then 0
-                        else (max(Contrato)*0.9 - max(Confiabilidade) - max(Demanda)) * 12 * max(TarifaDrp)
+                            when max(Demanda) >= max(Contrato)*0.9 - max(Confiabilidade) then 0
+                            else (max(Contrato)*0.9 - max(Confiabilidade) - max(Demanda)) * 12 * max(TarifaDrp)
                         end as Pis
                     from BaseMust
                         group by
@@ -209,7 +226,8 @@ export class SimuladorAdapter implements ISimuladorAdapter {
                             Ponto,
                             Posto,
                             TipoDemanda,
-                            TipoContrato
+                            TipoContrato,
+                            Empresa
                 )
 
                 select
@@ -234,13 +252,15 @@ export class SimuladorAdapter implements ISimuladorAdapter {
                     coalesce(B.Pis, 0) as Pis,
                     TarifaDrp * Contrato as Eust,
                     TarifaDra * ContratoOrcado as Dra,
-                    TarifaDrp * ContratoOrcado as Drp
+                    TarifaDrp * ContratoOrcado as Drp,
+                    A.Empresa
                 from BaseMust A
                     left join Pis B on (
                         A.Ponto = B.Ponto and
                         A.Posto = B.Posto and
                         A.TipoDemanda = B.TipoDemanda and
                         A.TipoContrato = B.TipoContrato and
+                        A.Empresa = B.Empresa and
                         substring(A.Data, 1, 4) = B.Ano and
                         substring(A.Data, 6, 2) = '12'
                     )
@@ -250,6 +270,79 @@ export class SimuladorAdapter implements ISimuladorAdapter {
             this.logger.error(`Fail generate simulator data`, error.stack);
             throw new InternalServerErrorException(error.message);
         }
+    }
+
+    public async getSummaryChart(filter: GetSummaryFiltersDto): Promise<SummaryData[]> {
+        return await this.repository.query(`
+            with Db as (
+                select
+                    Empresa,
+                    Data,
+                    substring(Data, 1, 4) as Ano,
+                    substring(Data, 6, 2) as Mes,
+                    TipoDemanda,
+                    TipoContrato,
+                    sum(Contrato) as Contrato,
+                    sum(Piu) as Piu,
+                    sum(\`Add\`) as \`Add\`,
+                    sum(Eust) as Eust,
+                    sum(Pis) as Pis,
+                    sum(Dra) as Dra,
+                    sum(Drp) as Drp
+                from simulador
+                group by
+                    Data,
+                    Empresa,
+                    TipoDemanda,
+                    TipoContrato
+            ), Parcela as (
+                select
+                    A.*,
+                    coalesce(B.Drp, 0) - A.Dra as ParcelaA,
+                    case
+                        when (A.Ano % 4 = 2 and A.Mes >= 10) or (A.Ano % 4 = 3 and A.Mes <= 9) then 0
+                        else coalesce(B.Drp, 0) - A.Dra
+                    end as ParcelaBTemp
+                from Db A left join Db B on (
+                    A.Empresa = B.Empresa and
+                    A.TipoDemanda = B.TipoDemanda and
+                    A.TipoContrato = B.TipoContrato and
+                    A.Ano = B.Ano + 1 and
+                    A.Mes = B.Mes
+                ) order by A.Data
+            )
+
+            select
+                A.Empresa,
+                A.Data,
+                A.TipoDemanda,
+                A.TipoContrato,
+                A.Contrato,
+                A.Piu,
+                A.Add,
+                A.Eust,
+                A.Pis,
+                A.Dra,
+                A.Drp,
+                A.ParcelaA,
+                case
+                    when (A.Ano % 4 = 2 and A.Mes >= 10) or (A.Ano % 4 = 3 and A.Mes <= 9) then 0
+                    else A.ParcelaBTemp + coalesce(B.ParcelaBTemp, 0)
+                end as ParcelaB
+            from Parcela A left join Parcela B on (
+                A.Empresa = B.Empresa and
+                A.TipoDemanda = B.TipoDemanda and
+                A.TipoContrato = B.TipoContrato and
+                A.Ano = B.Ano + 1 and
+                A.Mes = B.Mes
+            )
+                where (
+                    A.Empresa = '${filter.Empresa}' and
+                    A.TipoContrato = '${filter.TipoContrato}' and
+                    A.TipoDemanda = '${filter.TipoDemanda}' 
+                )
+                order by A.Data asc
+        `);
     }
 
     public async removeAll(): Promise<Simulador[]> {

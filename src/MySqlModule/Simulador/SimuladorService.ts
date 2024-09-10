@@ -7,6 +7,9 @@ import { GetSimuladorDto } from "./dto/GetSimuladorDto";
 import { ISimuladorAdapter } from "./SimuladorAdapter";
 import { Penalidade } from "src/types/Penalidade";
 import { Providers } from "src/Providers";
+import { GetSummaryDto } from "./dto/GetSummaryDto";
+import { Region } from "src/types/Region";
+import { GetSummaryFiltersDto } from "./dto/GetSummaryFiltersDto";
 
 export interface ISimuladorService {
     /**
@@ -47,6 +50,14 @@ export interface ISimuladorService {
      * @throws {InternalServerErrorException}
      */
     removeAll(): Promise<GetSimuladorDto>;
+
+    /**
+     * @async
+     * @param {GetSummaryFiltersDto} filter
+     * @returns {Promise<GetSummaryDto>}
+     * @throws {InternalServerErrorException}
+     */
+    getSummaryChart(filter: GetSummaryFiltersDto): Promise<GetSummaryDto>;
 }
 
 
@@ -94,6 +105,13 @@ export class SimuladorService implements ISimuladorService {
         this.logger.log(`Removing all simulador data`);
         return {
             data: await this.adapter.removeAll()
+        };
+    }
+
+    public async getSummaryChart(filter: GetSummaryFiltersDto): Promise<GetSummaryDto> {
+        this.logger.log(`Fetching all summary chart data`);
+        return {
+            summary: await this.adapter.getSummaryChart(filter)
         };
     }
 }

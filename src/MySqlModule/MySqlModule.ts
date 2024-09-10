@@ -23,7 +23,7 @@ import { Module } from "@nestjs/common";
             entities: [
                 Confiabilidade, Contrato, Demanda, Simulador, Tarifa
             ],
-            synchronize: true,
+            // synchronize: true,
         }),
         ConfiabilidadeModule,
         ContratoModule,

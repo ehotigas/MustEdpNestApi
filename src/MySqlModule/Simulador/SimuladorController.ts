@@ -3,8 +3,10 @@ import { GetPenalidadeChartDataDto } from "./dto/GetPenalidadeChartDataDto";
 import { ApiBody, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { GetDemandaChartDataDto } from "./dto/GetDemandaChartDataDto";
 import { GetSimuladorFiltersDto } from "./dto/GetSimuladorFiltersDto";
+import { GetSummaryFiltersDto } from "./dto/GetSummaryFiltersDto";
 import { GetSimuladorDto } from "./dto/GetSimuladorDto";
 import { ISimuladorService } from "./SimuladorService";
+import { GetSummaryDto } from "./dto/GetSummaryDto";
 import { Penalidade } from "src/types/Penalidade";
 import { Providers } from "src/Providers";
 
@@ -50,6 +52,7 @@ export class SimuladorController {
 
     @Post("/penalidade-data")
     @ApiQuery({
+        name: "penalidade",
         type: String,
         enum: Penalidade
     })
@@ -93,5 +96,21 @@ export class SimuladorController {
     })
     public async deleteAll(): Promise<GetSimuladorDto> {
         return await this.service.removeAll();
+    }
+
+    @Post("/summary")
+    @ApiBody({ type: GetSummaryFiltersDto })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: GetSummaryDto
+    })
+    @ApiResponse({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        type: InternalServerErrorException
+    })
+    public async getSummaryChart(
+        @Body(new ValidationPipe()) filter: GetSummaryFiltersDto
+    ): Promise<GetSummaryDto> {
+        return await this.service.getSummaryChart(filter);
     }
 }

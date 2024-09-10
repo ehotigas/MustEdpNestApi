@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
+import { Region } from "src/types/Region";
 
 @Entity("Simulador")
 export class Simulador {
@@ -37,7 +38,11 @@ export class Simulador {
 
     @ApiProperty({ type: Number })
     @Column({ type: 'float' })
-    Tarifa: number;
+    TarifaDra: number;
+
+    @ApiProperty({ type: Number })
+    @Column({ type: 'float' })
+    TarifaDrp: number;
 
     @ApiProperty({ type: Number })
     @Column({ type: 'float' })
@@ -65,5 +70,12 @@ export class Simulador {
 
     @ApiProperty({ type: Number })
     @Column({ type: 'float' })
-    Drp: number; 
+    Drp: number;
+
+    @ApiProperty({
+        type: String,
+        enum: Region
+    })
+    @Column({ type: String, nullable: true })
+    Empresa: Region;
 }
