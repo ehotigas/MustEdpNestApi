@@ -37,11 +37,11 @@ export class Simulador {
     Contrato: number;
 
     @ApiProperty({ type: Number })
-    @Column({ type: 'float' })
+    @Column({ type: 'float', nullable: true })
     TarifaDra: number;
 
     @ApiProperty({ type: Number })
-    @Column({ type: 'float' })
+    @Column({ type: 'float', nullable: true })
     TarifaDrp: number;
 
     @ApiProperty({ type: Number })
@@ -65,11 +65,11 @@ export class Simulador {
     Eust: number;
 
     @ApiProperty({ type: Number })
-    @Column({ type: 'float' })
+    @Column({ type: 'float', nullable: true })
     Dra: number;
 
     @ApiProperty({ type: Number })
-    @Column({ type: 'float' })
+    @Column({ type: 'float', nullable: true })
     Drp: number;
 
     @ApiProperty({

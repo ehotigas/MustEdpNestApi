@@ -1,5 +1,6 @@
 import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
 import { GetSimuladorFiltersDto } from "./dto/GetSimuladorFiltersDto";
+import { GetSummaryFiltersDto } from "./dto/GetSummaryFiltersDto";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { PenalidadeChartData } from "./PenalidadeChartData";
 import { Repository, SelectQueryBuilder } from "typeorm";
@@ -8,9 +9,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Penalidade } from "src/types/Penalidade";
 import { SummaryData } from "./SummaryData";
 import { Providers } from "src/Providers";
-import { Region } from "src/types/Region";
 import { Simulador } from "./Simulador";
-import { GetSummaryFiltersDto } from "./dto/GetSummaryFiltersDto";
 
 export interface ISimuladorAdapter {
     /**
@@ -78,14 +77,23 @@ export class SimuladorAdapter implements ISimuladorAdapter {
         const demanda = filter.TipoDemanda;
         query = query.where('simulador.TipoDemanda = :demanda', { demanda });
         Object.keys(filter).map((key: string) => {
-            if (!["TipoDemanda", "Ano"].includes(key) && filter[key] !== "Todos") {
+            if (!["TipoDemanda", "Ano", "Empresa", "Posto"].includes(key) && filter[key] !== "Todos") {
                 const value = filter[key];
                 query = query.andWhere(`simulador.${key} = :value`, { value });
             }
         });
+        if (filter.Posto !== "Todos") {
+            const posto = filter.Posto;
+            query = query.andWhere(`simulador.Posto = :posto`, { posto });
+        }
+
         if (filter.Ano !== "Todos") {
             const ano = filter.Ano;
             query = query.andWhere(`substring(cast(simulador.Data as varchar), 1, 4) = :ano`, { ano });
+        }
+        if (filter?.Empresa) {
+            const region = filter.Empresa;
+            query = query.andWhere(`simulador.Empresa = :region`, { region });
         }
         return query;
     }
@@ -172,7 +180,35 @@ export class SimuladorAdapter implements ISimuladorAdapter {
         try {
             return await this.repository.query(`
                 insert into Simulador (Data, Ponto, Posto, TipoDemanda, Demanda, TipoContrato, Contrato, TarifaDra, TarifaDrp, Confiabilidade, Piu, \`Add\`, Pis, Eust, Dra, Drp, Empresa)
-                with BaseMust as (
+                with BaseTarifaDrp as (
+                    select
+                        Ponto,
+                        Posto,
+                        Data,
+                        Tarifa as TarifaDrp,
+                        Empresa
+                    from Tarifa
+                        where TipoTarifa = 'Tarifa DRP'
+                ), BaseTarifaDra as (
+                    select
+                        Ponto,
+                        Posto,
+                        Data,
+                        Tarifa as TarifaDra,
+                        Empresa
+                    from Tarifa
+                        where TipoTarifa = 'Tarifa DRA'
+                ), BaseTarifa as (
+                    select
+                        A.*,
+                        B.TarifaDra
+                    from BaseTarifaDrp A left join BaseTarifaDra B on (
+                        A.Ponto = B.Ponto and
+                        A.Posto = B.Posto and
+                        A.Data = B.Data and
+                        A.Empresa = B.Empresa
+                    )
+                ), BaseMust as (
                     select
                         A.*,
                         B.TipoContrato,
@@ -188,7 +224,7 @@ export class SimuladorAdapter implements ISimuladorAdapter {
                             A.Data = B.Data and
                             A.Empresa = B.Empresa
                         )
-                        inner join Tarifa C on (
+                        inner join BaseTarifa C on (
                             A.Ponto = C.Ponto and
                             A.Posto = C.Posto and
                             A.Data = C.Data and
