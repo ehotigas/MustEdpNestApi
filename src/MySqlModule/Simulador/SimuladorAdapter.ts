@@ -77,11 +77,17 @@ export class SimuladorAdapter implements ISimuladorAdapter {
         const demanda = filter.TipoDemanda;
         query = query.where('simulador.TipoDemanda = :demanda', { demanda });
         Object.keys(filter).map((key: string) => {
-            if (!["TipoDemanda", "Ano", "Empresa", "Posto"].includes(key) && filter[key] !== "Todos") {
+            if (!["TipoDemanda", "Ano", "Empresa", "Posto", "Ponto"].includes(key) && filter[key] !== "Todos") {
                 const value = filter[key];
                 query = query.andWhere(`simulador.${key} = :value`, { value });
             }
         });
+
+        if (filter.Ponto !== "Todos") {
+            const ponto = filter.Ponto;
+            query = query.andWhere(`simulador.Ponto = :ponto`, { ponto });
+        }
+
         if (filter.Posto !== "Todos") {
             const posto = filter.Posto;
             query = query.andWhere(`simulador.Posto = :posto`, { posto });
@@ -136,10 +142,11 @@ export class SimuladorAdapter implements ISimuladorAdapter {
                 "simulador.Data as Data",
                 "simulador.TipoContrato as TipoContrato",
                 "sum(simulador.Demanda) as Demanda",
-                "sum(simulador.Piu)/1000000 as Piu",
-                "sum(simulador.`Add`)/1000000 as `Add`",
-                "sum(simulador.Pis)/1000000 as Pis",
-                "sum(simulador.Eust)/1000000 as Eust",
+                "sum(simulador.Piu)/1000 as Piu",
+                "sum(simulador.`Add`)/1000 as `Add`",
+                "sum(simulador.Pis)/1000 as Pis",
+                "sum(simulador.Eust)/1000 as Eust",
+                "sum(simulador.Piu + simulador.Eust + simulador.`Add` + simulador.Pis)/1000 as Total",
             ]);
             query = query.orderBy("Data", "ASC");
             return await query.getRawMany();
@@ -153,13 +160,14 @@ export class SimuladorAdapter implements ISimuladorAdapter {
     public async findPenalidadeChartData(filter: GetSimuladorFiltersDto, penalidade: Penalidade): Promise<PenalidadeChartData[]> {
         try {
             let query = await this.getFilterQuery(filter);
-            let arr = [ `sum(simulador.${penalidade})/1000000 as [${penalidade}]` ];
+            let arr = [ `sum(simulador.${penalidade})/1000 as [${penalidade}]` ];
             if (penalidade === Penalidade.TODAS) {
                 arr = [
-                    "sum(simulador.Piu)/1000000 as Piu",
-                    "sum(simulador.`Add`)/1000000 as `Add`",
-                    "sum(simulador.Pis)/1000000 as Pis",
-                    "sum(simulador.Eust)/1000000 as Eust"
+                    "sum(simulador.Piu)/1000 as Piu",
+                    "sum(simulador.`Add`)/1000 as `Add`",
+                    "sum(simulador.Pis)/1000 as Pis",
+                    "sum(simulador.Eust)/1000 as Eust",
+                    "sum(simulador.Piu + simulador.Eust + simulador.`Add` + simulador.Pis)/1000 as Total",
                 ];
             }
             query = query.groupBy("simulador.TipoContrato");

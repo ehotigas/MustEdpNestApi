@@ -18,4 +18,7 @@ export class DemandaChartData {
     
     @ApiProperty({ type: Number })
     Eust: number;
+    
+    @ApiProperty({ type: Number })
+    Total: number;
 }

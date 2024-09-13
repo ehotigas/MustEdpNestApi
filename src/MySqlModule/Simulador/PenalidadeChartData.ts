@@ -11,4 +11,6 @@ export class PenalidadeChartData {
     Add?: number;
     @ApiProperty({ type: Number, nullable: true })
     Eust?: number;
+    @ApiProperty({ type: Number, nullable: true })
+    Total?: number;
 }
