@@ -1,15 +1,12 @@
 import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
-import { GetPenalidadeChartDataDto } from "./dto/GetPenalidadeChartDataDto";
-import { GetDemandaChartDataDto } from "./dto/GetDemandaChartDataDto";
+import { GetDemandaChartDataDto } from "./DemandaChart/dto/GetDemandaChartDataDto";
 import { GetSimuladorFiltersDto } from "./dto/GetSimuladorFiltersDto";
+import { GetSummaryFiltersDto } from "./dto/GetSummaryFiltersDto";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { GetSimuladorDto } from "./dto/GetSimuladorDto";
 import { ISimuladorAdapter } from "./SimuladorAdapter";
-import { Penalidade } from "src/types/Penalidade";
 import { Providers } from "src/Providers";
 import { GetSummaryDto } from "./dto/GetSummaryDto";
-import { Region } from "src/types/Region";
-import { GetSummaryFiltersDto } from "./dto/GetSummaryFiltersDto";
 
 export interface ISimuladorService {
     /**
@@ -27,15 +24,6 @@ export interface ISimuladorService {
      * @throws {InternalServerErrorException}
      */
     findDemandaChartData(filter: GetSimuladorFiltersDto): Promise<GetDemandaChartDataDto>;
-
-    /**
-     * @async
-     * @param {GetSimuladorFiltersDto} filter
-     * @param {Penalidade} penalidade
-     * @returns {Promise<GetPenalidadeChartDataDto>}
-     * @throws {InternalServerErrorException}
-     */
-    findPenalidadeChartData(filter: GetSimuladorFiltersDto, penalidade: Penalidade): Promise<GetPenalidadeChartDataDto>;
 
     /**
      * @async
@@ -84,13 +72,6 @@ export class SimuladorService implements ISimuladorService {
         this.logger.log(`Fetching all demanda chart data`);
         return {
             data: await this.adapter.findDemandaChartData(filter)
-        };
-    }
-
-    public async findPenalidadeChartData(filter: GetSimuladorFiltersDto, penalidade: Penalidade): Promise<GetPenalidadeChartDataDto> {
-        this.logger.log(`Fetching all penalidade chart data`);
-        return {
-            data: await this.adapter.findPenalidadeChartData(filter, penalidade)
         };
     }
 

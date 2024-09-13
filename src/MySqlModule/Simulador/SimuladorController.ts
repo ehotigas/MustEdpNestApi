@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, HttpStatus, Inject, InternalServerErrorException, Post, Query, ValidationPipe } from "@nestjs/common";
-import { GetPenalidadeChartDataDto } from "./dto/GetPenalidadeChartDataDto";
+import { GetPenalidadeChartDataDto } from "./Custos/dto/GetCustosChartDataDto";
 import { ApiBody, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { GetDemandaChartDataDto } from "./dto/GetDemandaChartDataDto";
-import { GetSimuladorFiltersDto } from "./dto/GetSimuladorFiltersDto";
+import { GetDemandaChartDataDto } from "./DemandaChart/dto/GetDemandaChartDataDto";
+import { GetSimuladorFiltersDto } from "./Custos/dto/GetSimuladorFiltersDto";
 import { GetSummaryFiltersDto } from "./dto/GetSummaryFiltersDto";
 import { GetSimuladorDto } from "./dto/GetSimuladorDto";
 import { ISimuladorService } from "./SimuladorService";
@@ -48,28 +48,6 @@ export class SimuladorController {
         @Body(new ValidationPipe()) input: GetSimuladorFiltersDto
     ): Promise<GetDemandaChartDataDto> {
         return await this.service.findDemandaChartData(input);
-    }
-
-    @Post("/penalidade-data")
-    @ApiQuery({
-        name: "penalidade",
-        type: String,
-        enum: Penalidade
-    })
-    @ApiBody({ type: GetSimuladorFiltersDto })
-    @ApiResponse({
-        status: HttpStatus.OK,
-        type: GetPenalidadeChartDataDto
-    })
-    @ApiResponse({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        type: InternalServerErrorException
-    })
-    public async getPenalidadeChartData(
-        @Body(new ValidationPipe()) filter: GetSimuladorFiltersDto,
-        @Query("penalidade") penalidade: Penalidade
-    ): Promise<GetPenalidadeChartDataDto> {
-        return this.service.findPenalidadeChartData(filter, penalidade);
     }
 
     @Post("/generate")

@@ -22,7 +22,8 @@ import { Simulador } from "./Simulador";
             provide: Providers.SIMULADOR_SERVICE,
             useClass: SimuladorService
         },
-    ]
+    ],
+    exports: [ Providers.SIMULADOR_ADAPTER ]
 })
 export class SimuladorModule {
 

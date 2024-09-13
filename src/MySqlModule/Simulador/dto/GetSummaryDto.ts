@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { SummaryData } from "../SummaryData";
+import { SummaryData } from "../Resumo/SummaryData";
 
 export class GetSummaryDto {
     @ApiProperty({ type: [SummaryData] })
