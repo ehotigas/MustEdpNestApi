@@ -1,12 +1,13 @@
+import { DemandaChartController } from "./DemandaChartController";
 import { LoggerModule } from "src/LoggerModule/LoggerModule";
-import { CustosController } from "./CustosController";
+import { DemandaChartAdapter } from "./DemandaChartAdapter";
+import { DemandaChartService } from "./DemandaChartService";
 import { SimuladorModule } from "../SimuladorModule";
-import { CustosAdapter } from "./CustosAdapter";
-import { CustosService } from "./CustosService";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Providers } from "src/Providers";
 import { Simulador } from "../Simulador";
 import { Module } from "@nestjs/common";
+
 
 @Module({
     imports: [
@@ -16,18 +17,18 @@ import { Module } from "@nestjs/common";
         LoggerModule,
         SimuladorModule
     ],
-    controllers: [ CustosController ],
+    controllers: [ DemandaChartController ],
     providers: [
         {
-            provide: Providers.CUSTOS_ADAPTER,
-            useClass: CustosAdapter
+            provide: Providers.DEMANDA_CHART_ADAPTER,
+            useClass: DemandaChartAdapter
         },
         {
-            provide: Providers.CUSTOS_SERVICE,
-            useClass: CustosService
+            provide: Providers.DEMANDA_CHART_SERVICE,
+            useClass: DemandaChartService
         }
     ]
 })
-export class CustosModule {
+export class DemandaChartModule {
 
 }

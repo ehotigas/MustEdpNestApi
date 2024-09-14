@@ -1,10 +1,11 @@
 import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
-import { GetSimuladorFiltersDto } from "./Custos/dto/GetSimuladorFiltersDto";
+import { GetSimuladorFiltersDto } from "./dto/GetSimuladorFiltersDto";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { Repository, SelectQueryBuilder } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Providers } from "src/Providers";
 import { Simulador } from "./Simulador";
+
 
 export interface ISimuladorAdapter {
     /**

@@ -1,6 +1,6 @@
-import { GetSimuladorFiltersDto } from "./dto/GetSimuladorFiltersDto";
-import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
+import { GetSimuladorFiltersDto } from "../dto/GetSimuladorFiltersDto";
+import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { ISimuladorAdapter } from "../SimuladorAdapter";
 import { DemandaChartData } from "./DemandaChartData";
 import { Providers } from "src/Providers";

@@ -1,12 +1,11 @@
 import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
-import { GetDemandaChartDataDto } from "./DemandaChart/dto/GetDemandaChartDataDto";
 import { GetSimuladorFiltersDto } from "./dto/GetSimuladorFiltersDto";
-import { GetSummaryFiltersDto } from "./dto/GetSummaryFiltersDto";
+import { GetSummaryFiltersDto } from "./Summary/dto/GetSummaryFiltersDto";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { GetSimuladorDto } from "./dto/GetSimuladorDto";
 import { ISimuladorAdapter } from "./SimuladorAdapter";
+import { GetSummaryDto } from "./Summary/dto/GetSummaryDto";
 import { Providers } from "src/Providers";
-import { GetSummaryDto } from "./dto/GetSummaryDto";
 
 export interface ISimuladorService {
     /**
@@ -16,14 +15,6 @@ export interface ISimuladorService {
      * @throws {InternalServerErrorException}
      */
     findAll(filter: GetSimuladorFiltersDto): Promise<GetSimuladorDto>;
-
-    /**
-     * @async
-     * @param {GetSimuladorFiltersDto} filter
-     * @returns {Promise<GetDemandaChartDataDto>}
-     * @throws {InternalServerErrorException}
-     */
-    findDemandaChartData(filter: GetSimuladorFiltersDto): Promise<GetDemandaChartDataDto>;
 
     /**
      * @async
@@ -38,14 +29,6 @@ export interface ISimuladorService {
      * @throws {InternalServerErrorException}
      */
     removeAll(): Promise<GetSimuladorDto>;
-
-    /**
-     * @async
-     * @param {GetSummaryFiltersDto} filter
-     * @returns {Promise<GetSummaryDto>}
-     * @throws {InternalServerErrorException}
-     */
-    getSummaryChart(filter: GetSummaryFiltersDto): Promise<GetSummaryDto>;
 }
 
 
@@ -68,13 +51,6 @@ export class SimuladorService implements ISimuladorService {
         };
     }
 
-    public async findDemandaChartData(filter: GetSimuladorFiltersDto): Promise<GetDemandaChartDataDto> {
-        this.logger.log(`Fetching all demanda chart data`);
-        return {
-            data: await this.adapter.findDemandaChartData(filter)
-        };
-    }
-
     public async generate(): Promise<GetSimuladorDto> {
         this.logger.log(`Generating simulador data`);
         return {
@@ -86,13 +62,6 @@ export class SimuladorService implements ISimuladorService {
         this.logger.log(`Removing all simulador data`);
         return {
             data: await this.adapter.removeAll()
-        };
-    }
-
-    public async getSummaryChart(filter: GetSummaryFiltersDto): Promise<GetSummaryDto> {
-        this.logger.log(`Fetching all summary chart data`);
-        return {
-            summary: await this.adapter.getSummaryChart(filter)
         };
     }
 }

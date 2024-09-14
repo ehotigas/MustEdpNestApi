@@ -1,5 +1,8 @@
+import { DemandaChartModule } from "./Simulador/DemandaChart/DemandaChartModule";
 import { ConfiabilidadeModule } from "./Confiabilidade/ConfiabilidadeModule";
+import { SummaryModule } from "./Simulador/Summary/SummaryModule";
 import { Confiabilidade } from "./Confiabilidade/Confiabilidade";
+import { CustosModule } from "./Simulador/Custos/CustosModule";
 import { SimuladorModule } from "./Simulador/SimuladorModule";
 import { ContratoModule } from "./Contrato/ContratoModule";
 import { DemandaModule } from "./Demanda/DemandaModule";
@@ -27,8 +30,11 @@ import { Module } from "@nestjs/common";
         }),
         ConfiabilidadeModule,
         ContratoModule,
+        CustosModule,
         DemandaModule,
+        DemandaChartModule,
         SimuladorModule,
+        SummaryModule,
         TarifaModule
     ]
 })

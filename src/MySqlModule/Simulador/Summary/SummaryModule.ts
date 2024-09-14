@@ -1,8 +1,8 @@
 import { LoggerModule } from "src/LoggerModule/LoggerModule";
-import { CustosController } from "./CustosController";
+import { SummaryController } from "./SummaryController";
 import { SimuladorModule } from "../SimuladorModule";
-import { CustosAdapter } from "./CustosAdapter";
-import { CustosService } from "./CustosService";
+import { SummaryAdapter } from "./SummaryAdapter";
+import { SummaryService } from "./SummaryService";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Providers } from "src/Providers";
 import { Simulador } from "../Simulador";
@@ -16,18 +16,18 @@ import { Module } from "@nestjs/common";
         LoggerModule,
         SimuladorModule
     ],
-    controllers: [ CustosController ],
+    controllers: [ SummaryController ],
     providers: [
         {
-            provide: Providers.CUSTOS_ADAPTER,
-            useClass: CustosAdapter
+            provide: Providers.SUMMARY_ADAPTER,
+            useClass: SummaryAdapter
         },
         {
-            provide: Providers.CUSTOS_SERVICE,
-            useClass: CustosService
+            provide: Providers.SUMMARY_SERVICE,
+            useClass: SummaryService
         }
     ]
 })
-export class CustosModule {
+export class SummaryModule {
 
 }

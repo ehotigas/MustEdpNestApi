@@ -28,7 +28,7 @@ export class CustosController {
         private readonly service: ICustosService
     ) {  }
 
-    @Post("/penalidade-data")
+    @Post("/")
     @ApiQuery({
         name: "penalidade",
         type: String,
