@@ -1,22 +1,22 @@
 import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
-import { GetSummaryFiltersDto } from "./dto/GetSummaryFiltersDto";
+import { GetSummaryFiltersDto } from "../Summary/dto/GetSummaryFiltersDto";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { ISimuladorAdapter } from "../SimuladorAdapter";
-import { SummaryData } from "./SummaryData";
 import { Providers } from "src/Providers";
+import { ParcelaAB } from "./ParcelaAB";
 
-export interface ISummaryAdapter {
+export interface IParcelaABAdapter {
     /**
      * @async
-     * @param {GetSummaryFiltersDto} filter
-     * @returns {Promise<SummaryData[]>}
+     * @param {GetSummaryFiltersDto} filter 
+     * @returns {Promise<ParcelaAB[]>}
      * @throws {InternalServerErrorException}
      */
-    findAll(filter: GetSummaryFiltersDto): Promise<SummaryData[]>;
+    findAll(filter: GetSummaryFiltersDto): Promise<ParcelaAB[]>;
 }
 
 @Injectable()
-export class SummaryAdapter implements ISummaryAdapter {
+export class ParcelaABAdapter implements IParcelaABAdapter {
     private readonly logger: Logger;
     public constructor(
         @Inject(Providers.SIMULADOR_ADAPTER)
@@ -27,7 +27,7 @@ export class SummaryAdapter implements ISummaryAdapter {
         this.logger = loggerFactory.getInstance("CustosAdapter");
     }
 
-    public async findAll(filter: GetSummaryFiltersDto): Promise<SummaryData[]> {
+    public async findAll(filter: GetSummaryFiltersDto): Promise<ParcelaAB[]> {
         try {
             return await this.adapter.getRepository().query(`
                 with Db as (
@@ -70,8 +70,12 @@ export class SummaryAdapter implements ISummaryAdapter {
                 ), FinalDB as (
                     select
                         A.Empresa,
-                        A.Data,
-                        A.Ano,
+                        concat(
+                            A.Ano,
+                            '-',
+                            A.Mes,
+                            '-01'
+                        ) as Data,
                         A.TipoDemanda,
                         A.TipoContrato,
                         A.Contrato,
@@ -104,7 +108,7 @@ export class SummaryAdapter implements ISummaryAdapter {
     
                 select
                     Empresa,
-                    Ano,
+                    Data,
                     TipoDemanda,
                     TipoContrato,
                     sum(Contrato)/1000 as Contrato,
@@ -121,10 +125,11 @@ export class SummaryAdapter implements ISummaryAdapter {
                     sum(-1 * (\`Add\` + Piu + Pis) + ParcelaA + ParcelaB)/1000000 as Total
                 from FinalDB
                     group by
-                        Ano,
+                        Data,
                         Empresa,
                         TipoContrato,
                         TipoDemanda
+                    order by Data asc
             `);
         }
         catch (error) {
