@@ -32,19 +32,27 @@ export class CustosAdapter implements ICustosAdapter {
     public async findAll(filter: GetSimuladorFiltersDto, penalidade: Penalidade): Promise<CustosChartData[]> {
         try {
             let query = await this.adapter.getFilterQuery(filter);
-            let arr = [ `sum(simulador.${penalidade})/1000 as [${penalidade}]` ];
+            let arr = [
+                `sum(simulador.${penalidade})/1000 as [${penalidade}]`,
+                "sum(simulador.Contrato)/1000 as Contrato"
+            ];
             if (penalidade === Penalidade.TODAS) {
                 arr = [
                     "sum(simulador.Piu)/1000 as Piu",
                     "sum(simulador.`Add`)/1000 as `Add`",
                     "sum(simulador.Pis)/1000 as Pis",
                     "sum(simulador.Eust)/1000 as Eust",
+                    "sum(simulador.Contrato)/1000 as Contrato",
                     "sum(simulador.Piu + simulador.Eust + simulador.`Add` + simulador.Pis)/1000 as Total",
                 ];
             }
             query = query.groupBy("simulador.TipoContrato");
+            query = query.addGroupBy("simulador.Data");
+            query = query.addGroupBy("simulador.Ponto");
             query = query.select([
                 "simulador.TipoContrato as TipoContrato",
+                "simulador.Data as Data",
+                "simulador.Ponto as Ponto",
                 ...arr
             ]);
             query = query.orderBy("TipoContrato", "ASC");

@@ -3,6 +3,12 @@ import { ApiProperty } from "@nestjs/swagger";
 export class CustosChartData {
     @ApiProperty({ type: String })
     TipoContrato: string;
+
+    @ApiProperty({ type: Date })
+    Data: Date;
+
+    @ApiProperty({ type: String })
+    Ponto: string;
     
     @ApiProperty({ type: Number, nullable: true })
     Piu?: number;
@@ -18,4 +24,7 @@ export class CustosChartData {
     
     @ApiProperty({ type: Number, nullable: true })
     Total?: number;
+
+    @ApiProperty({ type: Number })
+    Contrato: number;
 }
