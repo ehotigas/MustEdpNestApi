@@ -58,7 +58,7 @@ export class ParcelaABAdapter implements IParcelaABAdapter {
                         coalesce(B.Drp, 0) - A.Dra as ParcelaA,
                         case
                             when (A.Ano % 4 = 2 and A.Mes >= 10) or (A.Ano % 4 = 3 and A.Mes <= 9) then 0
-                            else coalesce(B.Drp, 0) - A.Dra
+                            else A.Dra - coalesce(B.Drp, 0)
                         end as ParcelaBTemp
                     from Db A left join Db B on (
                         A.Empresa = B.Empresa and
@@ -115,13 +115,13 @@ export class ParcelaABAdapter implements IParcelaABAdapter {
                     sum(Demanda)/1000 as Demanda,
                     sum(Piu) as Piu,
                     sum(\`Add\`) as \`Add\`,
-                    sum(Eust) as Eust,
+                    sum(Eust)/1000000 as Eust,
                     sum(Pis) as Pis,
                     sum(Dra) as Dra,
                     sum(Drp) as Drp,
                     sum(ParcelaA)/1000000 as ParcelaA,
                     sum(ParcelaB)/1000000 as ParcelaB,
-                    sum(\`Add\` + Piu + Pis)/1000000 as CustoTotal,
+                    -1 * sum(\`Add\` + Piu + Pis)/1000000 as CustoTotal,
                     sum(-1 * (\`Add\` + Piu + Pis) + ParcelaA + ParcelaB)/1000000 as Total
                 from FinalDB
                     group by

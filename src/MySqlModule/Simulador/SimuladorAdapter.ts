@@ -82,7 +82,7 @@ export class SimuladorAdapter implements ISimuladorAdapter {
 
         if (filter.Ano !== "Todos") {
             const ano = filter.Ano;
-            query = query.andWhere(`substring(cast(simulador.Data as varchar), 1, 4) = :ano`, { ano });
+            query = query.andWhere(`substring(simulador.Data, 1, 4) = :ano`, { ano });
         }
         if (filter?.Empresa) {
             const region = filter.Empresa;
