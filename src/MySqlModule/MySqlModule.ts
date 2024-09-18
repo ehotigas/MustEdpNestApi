@@ -5,6 +5,7 @@ import { SummaryModule } from "./Simulador/Summary/SummaryModule";
 import { Confiabilidade } from "./Confiabilidade/Confiabilidade";
 import { CustosModule } from "./Simulador/Custos/CustosModule";
 import { SimuladorModule } from "./Simulador/SimuladorModule";
+import { CicloModule } from "./Simulador/Ciclo/CicloModule";
 import { ContratoModule } from "./Contrato/ContratoModule";
 import { DemandaModule } from "./Demanda/DemandaModule";
 import { TarifaModule } from "./Tarifa/TarifaModule";
@@ -29,6 +30,7 @@ import { Module } from "@nestjs/common";
             ],
             // synchronize: true,
         }),
+        CicloModule,
         ConfiabilidadeModule,
         ContratoModule,
         CustosModule,
