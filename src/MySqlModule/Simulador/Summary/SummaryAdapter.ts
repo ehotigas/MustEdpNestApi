@@ -28,8 +28,13 @@ export class SummaryAdapter implements ISummaryAdapter {
     }
 
     public async findAll(filter: GetSummaryFiltersDto): Promise<SummaryData[]> {
+        // Jamile
         // ParcelaB: DRA(ano atual) - DRP(ano anterior)+ParcelaB(ano anterior)
         // ParcelaA: DRP(ano anterior) - DRA(ano atual)
+
+        // Tiago
+        // ParcelaB: DRP(ano atual) - DRA(ano anterior)+ParcelaB(ano anterior)
+        // ParcelaA: DRA(ano anterior) - DRP(ano atual)
         try {
             return await this.adapter.getRepository().query(`
                 with Db as (
@@ -57,10 +62,11 @@ export class SummaryAdapter implements ISummaryAdapter {
                 ), Parcela as (
                     select
                         A.*,
-                        coalesce(B.Drp, 0) - A.Dra as ParcelaA,
+                        coalesce(B.Dra, 0) as DraAnt,
+                        coalesce(B.Dra, 0) - A.Drp as ParcelaA,
                         case
                             when (A.Ano % 4 = 2 and A.Mes >= 10) or (A.Ano % 4 = 3 and A.Mes <= 9) then 0
-                            else A.Dra - coalesce(B.Drp, 0)
+                            else A.Drp - coalesce(B.Dra, 0)
                         end as ParcelaBTemp
                     from Db A left join Db B on (
                         A.Empresa = B.Empresa and
@@ -69,39 +75,70 @@ export class SummaryAdapter implements ISummaryAdapter {
                         A.Ano = B.Ano + 1 and
                         A.Mes = B.Mes
                     ) order by A.Data
-                ), FinalDB as (
+                ), Ano0 as (
                     select
-                        A.Empresa,
-                        A.Data,
-                        A.Ano,
-                        A.TipoDemanda,
-                        A.TipoContrato,
-                        A.Contrato,
-                        A.Demanda,
-                        A.Piu,
-                        A.Add,
-                        A.Eust,
-                        A.Pis,
-                        A.Dra,
-                        A.Drp,
-                        A.ParcelaA,
+                        *,
                         case
-                            when (A.Ano % 4 = 2 and A.Mes >= 10) or (A.Ano % 4 = 3 and A.Mes <= 9) then 0
-                            else A.ParcelaBTemp + coalesce(B.ParcelaBTemp, 0)
+                            when Mes <= 9 then 0
+                            else ParcelaBTemp
                         end as ParcelaB
-                    from Parcela A left join Parcela B on (
+                    from Parcela
+                        where Ano % 4 = 3
+                ), Ano1 as (
+                    select
+                        A.*,
+                        A.ParcelaBTemp + B.ParcelaB as ParcelaB
+                    from Parcela A left join Ano0 B on (
                         A.Empresa = B.Empresa and
                         A.TipoDemanda = B.TipoDemanda and
                         A.TipoContrato = B.TipoContrato and
                         A.Ano = B.Ano + 1 and
                         A.Mes = B.Mes
-                    )
+                    ) where A.Ano % 4 = 0
+                ), Ano2 as (
+                    select
+                        A.*,
+                        A.ParcelaBTemp + B.ParcelaB as ParcelaB
+                    from Parcela A left join Ano1 B on (
+                        A.Empresa = B.Empresa and
+                        A.TipoDemanda = B.TipoDemanda and
+                        A.TipoContrato = B.TipoContrato and
+                        A.Ano = B.Ano + 1 and
+                        A.Mes = B.Mes
+                    ) where A.Ano % 4 = 1
+                ), Ano3 as (
+                    select
+                        A.*,
+                        case
+                            when A.Mes >= 10 then 0
+                            else A.ParcelaBTemp + B.ParcelaB
+                        end as ParcelaB
+                    from Parcela A left join Ano2 B on (
+                        A.Empresa = B.Empresa and
+                        A.TipoDemanda = B.TipoDemanda and
+                        A.TipoContrato = B.TipoContrato and
+                        A.Ano = B.Ano + 1 and
+                        A.Mes = B.Mes
+                    ) where A.Ano % 4 = 2
+                ), UnionDB as (
+                    select * from Ano0
+                    union all
+                    select * from Ano1
+                    union all
+                    select * from Ano2
+                    union all
+                    select * from Ano3
+                ), FinalDB as (
+                    select
+                        *
+                    from UnionDB
                         where (
-                            A.Empresa = '${filter.Empresa}' and
-                            A.TipoContrato = '${filter.TipoContrato}' and
-                            A.TipoDemanda = '${filter.TipoDemanda}' 
+                            Empresa = '${filter.Empresa}' and
+                            TipoContrato = '${filter.TipoContrato}' and
+                            TipoDemanda = '${filter.TipoDemanda}' and
+                            Data >= '2018-10-01'
                         )
-                        order by A.Data asc
+                        order by Data asc
                 )
     
                 select
@@ -113,7 +150,7 @@ export class SummaryAdapter implements ISummaryAdapter {
                     sum(Demanda)/1000 as Demanda,
                     sum(Piu) as Piu,
                     sum(\`Add\`) as \`Add\`,
-                    sum(Eust) as Eust,
+                    sum(Eust)/1000000 as Eust,
                     sum(Pis) as Pis,
                     sum(Dra) as Dra,
                     sum(Drp) as Drp,
@@ -127,6 +164,7 @@ export class SummaryAdapter implements ISummaryAdapter {
                         Empresa,
                         TipoContrato,
                         TipoDemanda
+                    order by Ano asc
             `);
         }
         catch (error) {
