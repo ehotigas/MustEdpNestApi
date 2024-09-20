@@ -33,17 +33,17 @@ export class CustosAdapter implements ICustosAdapter {
         try {
             let query = await this.adapter.getFilterQuery(filter);
             let arr = [
-                `sum(simulador.${penalidade})/1000 as [${penalidade}]`,
+                `sum(simulador.${penalidade})/1000000 as [${penalidade}]`,
                 "sum(simulador.Contrato)/1000 as Contrato"
             ];
             if (penalidade === Penalidade.TODAS) {
                 arr = [
-                    "sum(simulador.Piu)/1000 as Piu",
-                    "sum(simulador.`Add`)/1000 as `Add`",
-                    "sum(simulador.Pis)/1000 as Pis",
-                    "sum(simulador.Eust)/1000 as Eust",
+                    "sum(simulador.Piu)/1000000 as Piu",
+                    "sum(simulador.`Add`)/1000000 as `Add`",
+                    "sum(simulador.Pis)/1000000 as Pis",
+                    "sum(simulador.Eust)/1000000 as Eust",
                     "sum(simulador.Contrato)/1000 as Contrato",
-                    "sum(simulador.Piu + simulador.Eust + simulador.`Add` + simulador.Pis)/1000 as Total",
+                    "sum(simulador.Piu + simulador.Eust + simulador.`Add` + simulador.Pis)/1000000 as Total",
                 ];
             }
             query = query.groupBy("simulador.TipoContrato");

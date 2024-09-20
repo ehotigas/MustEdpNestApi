@@ -222,16 +222,17 @@ export class SimuladorAdapter implements ISimuladorAdapter {
                     A.TarifaDrp,
                     A.Confiabilidade,
                     case
-                        when A.Posto in ('Cebrasp 88kV', 'DCTA 88kV', 'Embraer 88kV', 'Mogi 230kV', 'Petrobrás Gleba D 138kV', 'Petrobrás RPO 138kV', 'Petrom 138kV', 'Sifão 138kV') then 0
+                        when A.Ponto in ('Cebrasp 88kV', 'DCTA 88kV', 'Embraer 88kV', 'Mogi 230kV', 'Petrobrás Gleba D 138kV', 'Petrobrás RPO 138kV', 'Petrom 138kV', 'Sifão 138kV') then 0
                         when Demanda > Contrato*1.1 then (Demanda - Contrato * 1.1) * 3 * TarifaDrp
                         else 0
                     end as Piu,
                     case
+                        when A.Ponto in ('Cebrasp 88kV', 'DCTA 88kV', 'Embraer 88kV', 'Mogi 230kV', 'Petrobrás Gleba D 138kV', 'Petrobrás RPO 138kV', 'Petrom 138kV', 'Sifão 138kV') then 0
                         when Demanda > Contrato then (Demanda - Contrato) * TarifaDrp
                         else 0
                     end as \`Add\`,
                     case
-                        when A.Posto in ('Cebrasp 88kV', 'DCTA 88kV', 'Embraer 88kV', 'Mogi 230kV', 'Petrobrás Gleba D 138kV', 'Petrobrás RPO 138kV', 'Petrom 138kV', 'Sifão 138kV') then 0
+                        when A.Ponto in ('Cebrasp 88kV', 'DCTA 88kV', 'Embraer 88kV', 'Mogi 230kV', 'Petrobrás Gleba D 138kV', 'Petrobrás RPO 138kV', 'Petrom 138kV', 'Sifão 138kV') then 0
                         else coalesce(B.Pis, 0)
                     end as Pis,
                     TarifaDrp * Contrato as Eust,

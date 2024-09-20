@@ -155,9 +155,9 @@ export class SummaryAdapter implements ISummaryAdapter {
                     sum(Dra) as Dra,
                     sum(Drp) as Drp,
                     sum(ParcelaA)/1000000 as ParcelaA,
-                    -1 * sum(ParcelaB)/1000000 as ParcelaB,
+                    sum(ParcelaB)/1000000 as ParcelaB,
                     -1 * sum(\`Add\` + Piu + Pis)/1000000 as CustoTotal,
-                    sum(-1 * (\`Add\` + Piu + Pis) + ParcelaA - ParcelaB)/1000000 as Total
+                    sum(-1 * (\`Add\` + Piu + Pis) + ParcelaA + ParcelaB)/1000000 as Total
                 from FinalDB
                     group by
                         Ano,

@@ -36,11 +36,11 @@ export class DemandaChartAdapter implements IDemandaChartAdapter {
                 "simulador.Data as Data",
                 "simulador.TipoContrato as TipoContrato",
                 "sum(simulador.Demanda) as Demanda",
-                "sum(simulador.Piu)/1000 as Piu",
-                "sum(simulador.`Add`)/1000 as `Add`",
-                "sum(simulador.Pis)/1000 as Pis",
-                "sum(simulador.Eust)/1000 as Eust",
-                "sum(simulador.Piu + simulador.Eust + simulador.`Add` + simulador.Pis)/1000 as Total",
+                "sum(simulador.Piu)/1000000 as Piu",
+                "sum(simulador.`Add`)/1000000 as `Add`",
+                "sum(simulador.Pis)/1000000 as Pis",
+                "sum(simulador.Eust)/1000000 as Eust",
+                "sum(simulador.Piu + simulador.Eust + simulador.`Add` + simulador.Pis)/1000000 as Total",
             ]);
             query = query.orderBy("Data", "ASC");
             return await query.getRawMany();
