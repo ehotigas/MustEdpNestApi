@@ -5,8 +5,8 @@ import { CreateDemandaDto } from "./dto/CreateDemandaDto";
 import { UpdateDemandaDto } from "./dto/UpdateDemandaDto";
 import { GetDemandaDto } from "./dto/GetDemandaDto";
 import { IDemandaAdapter } from "./DemandaAdapter";
-import { Region } from "src/types/Region";
-import { Providers } from "src/Providers";
+import { Region } from "src/types/region";
+import { Providers } from "src/providers";
 import { Demanda } from "./Demanda";
 
 export interface IDemandaService {

@@ -3,8 +3,8 @@ import { GetSimuladorFiltersDto } from "../dto/GetSimuladorFiltersDto";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { ISimuladorAdapter } from "../SimuladorAdapter";
 import { CustosChartData } from "./CustosChartData";
-import { Penalidade } from "src/types/Penalidade";
-import { Providers } from "src/Providers";
+import { Penalidade } from "src/types/penalidade";
+import { Providers } from "src/providers";
 
 export interface ICustosAdapter {
     /**

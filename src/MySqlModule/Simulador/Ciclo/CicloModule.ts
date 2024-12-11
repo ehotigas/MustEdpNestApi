@@ -4,7 +4,7 @@ import { CicloController } from "./CicloController";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { CicloAdapter } from "./CicloAdapter";
 import { CicloService } from "./CicloService";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { Simulador } from "../Simulador";
 import { Module } from "@nestjs/common";
 

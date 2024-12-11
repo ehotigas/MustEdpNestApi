@@ -1,7 +1,7 @@
 import { GetSummaryFiltersDto } from "../Summary/dto/GetSummaryFiltersDto";
 import { GetCicloDto } from "./dto/GetCicloDto";
 import { ICicloService } from "./CicloService";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import {
     ApiBody,
     ApiResponse,

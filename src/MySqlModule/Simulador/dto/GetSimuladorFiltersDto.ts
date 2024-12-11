@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Posto } from "src/types/Posto";
-import { Region } from "src/types/Region";
+import { Posto } from "src/types/posto";
+import { Region } from "src/types/region";
 
 export class GetSimuladorFiltersDto {
     @ApiProperty({ type: String })

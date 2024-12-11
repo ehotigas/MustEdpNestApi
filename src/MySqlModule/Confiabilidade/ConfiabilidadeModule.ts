@@ -4,7 +4,7 @@ import { ConfiabilidadeService } from "./ConfiabilidadeService";
 import { LoggerModule } from "src/LoggerModule/LoggerModule";
 import { Confiabilidade } from "./Confiabilidade";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { Module } from "@nestjs/common";
 
 @Module({

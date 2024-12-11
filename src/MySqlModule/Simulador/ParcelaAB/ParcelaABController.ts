@@ -1,7 +1,7 @@
 import { GetSummaryFiltersDto } from "../Summary/dto/GetSummaryFiltersDto";
 import { GetParcelaABDto } from "./dto/GetParcelaABDto";
 import { IParcelaABService } from "./ParcelaABService";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import {
     ApiBody,
     ApiResponse,

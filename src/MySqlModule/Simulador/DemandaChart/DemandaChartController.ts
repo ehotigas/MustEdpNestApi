@@ -1,7 +1,7 @@
 import { GetSimuladorFiltersDto } from "../dto/GetSimuladorFiltersDto";
 import { GetDemandaChartDataDto } from "./dto/GetDemandaChartDataDto";
 import { IDemandaChartService } from "./DemandaChartService";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import {
     ApiBody,
     ApiResponse,

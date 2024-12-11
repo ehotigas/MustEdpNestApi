@@ -1,0 +1,5 @@
+export enum DataType {
+    TARIFA = "TARIFA",
+    DEMANDA = "DEMANDA",
+    CONFIABILIDADE = "CONFIABILIDADE",
+}

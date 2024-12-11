@@ -5,8 +5,8 @@ import { CreateContratoDto } from "./dto/CreateContratoDto";
 import { UpdateContratoDto } from "./dto/UpdateContratoDto";
 import { GetContratoDto } from "./dto/GetContratoDto";
 import { IContratoAdapter } from "./ContratoAdapter";
-import { Region } from "src/types/Region";
-import { Providers } from "src/Providers";
+import { Region } from "src/types/region";
+import { Providers } from "src/providers";
 import { Contrato } from "./Contrato";
 
 export interface IContratoService {

@@ -6,8 +6,8 @@ import { GetConfiabilidadeDto } from "./dto/GetConfiabilidadeDto";
 import { IConfiabilidadeAdapter } from "./ConfiabilidadeAdapter";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { Confiabilidade } from "./Confiabilidade";
-import { Region } from "src/types/Region";
-import { Providers } from "src/Providers";
+import { Region } from "src/types/region";
+import { Providers } from "src/providers";
 
 export interface IConfiabilidadeService {
     /**

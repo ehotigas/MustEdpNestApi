@@ -3,7 +3,7 @@ import { TarifaController } from "./TarifaController";
 import { TarifaAdapter } from "./TarifaAdapter";
 import { TarifaService } from "./TarifaService";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { Module } from "@nestjs/common";
 import { Tarifa } from "./Tarifa";
 

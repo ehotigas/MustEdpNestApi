@@ -3,7 +3,7 @@ import { GetSimuladorFiltersDto } from "./dto/GetSimuladorFiltersDto";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { Repository, SelectQueryBuilder } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { Simulador } from "./Simulador";
 
 

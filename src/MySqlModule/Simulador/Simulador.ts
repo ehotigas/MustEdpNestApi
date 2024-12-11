@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { Region } from "src/types/Region";
+import { Region } from "src/types/region";
 
 @Entity("Simulador")
 export class Simulador {

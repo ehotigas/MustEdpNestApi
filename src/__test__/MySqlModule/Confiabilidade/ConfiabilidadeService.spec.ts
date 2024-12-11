@@ -1,9 +1,9 @@
 import { ConfiabilidadeService, IConfiabilidadeService } from "src/MySqlModule/Confiabilidade/ConfiabilidadeService";
 import { IConfiabilidadeAdapter } from "src/MySqlModule/Confiabilidade/ConfiabilidadeAdapter";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { Test } from "@nestjs/testing";
 import { Confiabilidade } from "src/MySqlModule/Confiabilidade/Confiabilidade";
-import { Region } from "src/types/Region";
+import { Region } from "src/types/region";
 import { InternalServerErrorException, NotFoundException } from "@nestjs/common";
 
 const confiabilidadeList = [

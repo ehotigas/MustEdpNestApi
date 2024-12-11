@@ -1,8 +1,8 @@
 import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Providers } from "src/Providers";
-import { Region } from "src/types/Region";
+import { Providers } from "src/providers";
+import { Region } from "src/types/region";
 import { Contrato } from "./Contrato";
 import { Repository } from "typeorm";
 

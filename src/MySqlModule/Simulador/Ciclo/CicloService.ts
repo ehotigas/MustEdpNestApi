@@ -3,7 +3,7 @@ import { GetSummaryFiltersDto } from "../Summary/dto/GetSummaryFiltersDto";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { GetCicloDto } from "./dto/GetCicloDto";
 import { ICicloAdapter } from "./CicloAdapter";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 
 export interface ICicloService {
     /**

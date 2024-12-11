@@ -2,7 +2,7 @@ import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestj
 import { GetSummaryFiltersDto } from "../Summary/dto/GetSummaryFiltersDto";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { ISimuladorAdapter } from "../SimuladorAdapter";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { ParcelaAB } from "./ParcelaAB";
 
 export interface IParcelaABAdapter {

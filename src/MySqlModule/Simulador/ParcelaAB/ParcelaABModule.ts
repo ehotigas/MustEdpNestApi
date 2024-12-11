@@ -4,7 +4,7 @@ import { ParcelaABAdapter } from "./ParcelaABAdapter";
 import { ParcelaABService } from "./ParcelaABService";
 import { SimuladorModule } from "../SimuladorModule";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { Module } from "@nestjs/common";
 import { Simulador } from "../Simulador";
 

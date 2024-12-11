@@ -1,8 +1,8 @@
 import { GetPenalidadeChartDataDto } from "./dto/GetCustosChartDataDto";
 import { GetSimuladorFiltersDto } from "../dto/GetSimuladorFiltersDto";
-import { Penalidade } from "src/types/Penalidade";
+import { Penalidade } from "src/types/penalidade";
 import { ICustosService } from "./CustosService";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import {
     ApiBody,
     ApiQuery,

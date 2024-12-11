@@ -1,10 +1,10 @@
 import { ConfiabilidadeAdapter, IConfiabilidadeAdapter } from "src/MySqlModule/Confiabilidade/ConfiabilidadeAdapter";
 import { Confiabilidade } from "src/MySqlModule/Confiabilidade/Confiabilidade";
 import { getRepositoryToken } from "@nestjs/typeorm";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { Test } from "@nestjs/testing";
 import { Repository } from "typeorm";
-import { Region } from "src/types/Region";
+import { Region } from "src/types/region";
 import { InternalServerErrorException } from "@nestjs/common";
 
 const confiabilidadeList = [

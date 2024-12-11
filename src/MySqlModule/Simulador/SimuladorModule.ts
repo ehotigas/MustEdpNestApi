@@ -3,7 +3,7 @@ import { SimuladorController } from "./SimuladorController";
 import { SimuladorAdapter } from "./SimuladorAdapter";
 import { SimuladorService } from "./SimuladorService";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { Module } from "@nestjs/common";
 import { Simulador } from "./Simulador";
 

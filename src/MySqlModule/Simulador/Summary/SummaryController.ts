@@ -1,7 +1,7 @@
 import { GetSummaryFiltersDto } from "./dto/GetSummaryFiltersDto";
 import { GetSummaryDto } from "./dto/GetSummaryDto";
 import { ISummaryService } from "./SummaryService";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import {
     ApiBody,
     ApiResponse,

@@ -1,5 +1,5 @@
 import { ILoggerFactory, LoggerFactory } from "src/LoggerModule/LoggerFactory";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { Logger } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 

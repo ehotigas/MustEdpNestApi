@@ -4,7 +4,7 @@ import { DemandaChartAdapter } from "./DemandaChartAdapter";
 import { DemandaChartService } from "./DemandaChartService";
 import { SimuladorModule } from "../SimuladorModule";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { Simulador } from "../Simulador";
 import { Module } from "@nestjs/common";
 

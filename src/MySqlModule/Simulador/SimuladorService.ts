@@ -5,7 +5,7 @@ import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { GetSimuladorDto } from "./dto/GetSimuladorDto";
 import { ISimuladorAdapter } from "./SimuladorAdapter";
 import { GetSummaryDto } from "./Summary/dto/GetSummaryDto";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 
 export interface ISimuladorService {
     /**

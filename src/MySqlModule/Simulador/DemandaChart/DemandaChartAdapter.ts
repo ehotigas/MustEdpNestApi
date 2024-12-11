@@ -3,7 +3,7 @@ import { GetSimuladorFiltersDto } from "../dto/GetSimuladorFiltersDto";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { ISimuladorAdapter } from "../SimuladorAdapter";
 import { DemandaChartData } from "./DemandaChartData";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 
 export interface IDemandaChartAdapter {
     /**

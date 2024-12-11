@@ -3,7 +3,7 @@ import { DemandaController } from "./DemandaController";
 import { DemandaAdapter } from "./DemandaAdapter";
 import { DemandaService } from "./DemandaService";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { Module } from "@nestjs/common";
 import { Demanda } from "./Demanda";
 

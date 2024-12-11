@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Region } from "src/types/Region"
+import { Region } from "src/types/region"
 
 export class SummaryData {
     @ApiProperty({ type: String, enum: Region })

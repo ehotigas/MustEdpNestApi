@@ -1,8 +1,8 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { Region } from "src/types/Region";
+import { Region } from "src/types/region";
 import { TipoTarifa } from "./TipoTarifa";
-import { Posto } from "src/types/Posto";
+import { Posto } from "src/types/posto";
 
 @Entity("Tarifa")
 export class Tarifa {

@@ -4,8 +4,8 @@ import { UpdateConfiabilidadeDto } from "./dto/UpdateConfiabilidadeDto";
 import { GetConfiabilidadeDto } from "./dto/GetConfiabilidadeDto";
 import { IConfiabilidadeService } from "./ConfiabilidadeService";
 import { Confiabilidade } from "./Confiabilidade";
-import { Providers } from "src/Providers";
-import { Region } from "src/types/Region";
+import { Providers } from "src/providers";
+import { Region } from "src/types/region";
 import {
     ApiBody,
     ApiParam,

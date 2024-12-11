@@ -1,9 +1,9 @@
 import { ConfiabilidadeController } from "src/MySqlModule/Confiabilidade/ConfiabilidadeController";
 import { IConfiabilidadeService } from "src/MySqlModule/Confiabilidade/ConfiabilidadeService";
 import { Confiabilidade } from "src/MySqlModule/Confiabilidade/Confiabilidade";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { Test } from "@nestjs/testing";
-import { Region } from "src/types/Region";
+import { Region } from "src/types/region";
 import { InternalServerErrorException, NotFoundException } from "@nestjs/common";
 
 const confiabilidadeList = [

@@ -3,7 +3,7 @@ import { GetSummaryFiltersDto } from "./dto/GetSummaryFiltersDto";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { ISimuladorAdapter } from "../SimuladorAdapter";
 import { SummaryData } from "./SummaryData";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 
 export interface ISummaryAdapter {
     /**

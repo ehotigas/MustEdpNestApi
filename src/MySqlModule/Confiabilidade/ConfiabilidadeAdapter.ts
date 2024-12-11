@@ -2,8 +2,8 @@ import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestj
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Confiabilidade } from "./Confiabilidade";
-import { Providers } from "src/Providers";
-import { Region } from "src/types/Region";
+import { Providers } from "src/providers";
+import { Region } from "src/types/region";
 import { Repository } from "typeorm";
 
 export interface IConfiabilidadeAdapter {

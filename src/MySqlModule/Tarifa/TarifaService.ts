@@ -5,8 +5,8 @@ import { CreateTarifaDto } from "./dto/CreateTarifaDto";
 import { UpdateTarifaDto } from "./dto/UpdateTarifaDto";
 import { GetTarifaDto } from "./dto/GetTarifaDto";
 import { ITarifaAdapter } from "./TarifaAdapter";
-import { Region } from "src/types/Region";
-import { Providers } from "src/Providers";
+import { Region } from "src/types/region";
+import { Providers } from "src/providers";
 import { Tarifa } from "./Tarifa";
 
 export interface ITarifaService {

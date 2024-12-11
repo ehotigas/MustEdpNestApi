@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Region } from "src/types/Region";
-import { Posto } from "src/types/Posto";
+import { Region } from "src/types/region";
+import { Posto } from "src/types/posto";
 
 export class CreateDemandaDto {
     @ApiProperty({ type: String })

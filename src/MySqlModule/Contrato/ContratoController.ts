@@ -1,11 +1,11 @@
 import { CreateManyContratoDto } from "./dto/CreateManyContratoDto";
 import { CreateContratoDto } from "./dto/CreateContratoDto";
 import { UpdateContratoDto } from "./dto/UpdateContratoDto";
-import { RequestError } from "src/types/RequestError";
+import { RequestError } from "src/types/request-error";
 import { GetContratoDto } from "./dto/GetContratoDto";
 import { IContratoService } from "./ContratoService";
-import { Providers } from "src/Providers";
-import { Region } from "src/types/Region";
+import { Providers } from "src/providers";
+import { Region } from "src/types/region";
 import { Contrato } from "./Contrato";
 import {
     ApiBody,

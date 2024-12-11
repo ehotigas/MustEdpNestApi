@@ -2,9 +2,9 @@ import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestj
 import { GetPenalidadeChartDataDto } from "./dto/GetCustosChartDataDto";
 import { GetSimuladorFiltersDto } from "../dto/GetSimuladorFiltersDto";
 import { ILoggerFactory } from "src/LoggerModule/LoggerFactory";
-import { Penalidade } from "src/types/Penalidade";
+import { Penalidade } from "src/types/penalidade";
 import { ICustosAdapter } from "./CustosAdapter";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 
 export interface ICustosService {
     /**

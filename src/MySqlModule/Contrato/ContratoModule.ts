@@ -3,7 +3,7 @@ import { ContratoController } from "./ContratoController";
 import { ContratoAdapter } from "./ContratoAdapter";
 import { ContratoService } from "./ContratoService";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 import { Module } from "@nestjs/common";
 import { Contrato } from "./Contrato";
 

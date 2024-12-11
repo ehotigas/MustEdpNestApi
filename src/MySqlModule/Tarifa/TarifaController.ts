@@ -3,8 +3,8 @@ import { CreateTarifaDto } from "./dto/CreateTarifaDto";
 import { UpdateTarifaDto } from "./dto/UpdateTarifaDto";
 import { GetTarifaDto } from "./dto/GetTarifaDto";
 import { ITarifaService } from "./TarifaService";
-import { Providers } from "src/Providers";
-import { Region } from "src/types/Region";
+import { Providers } from "src/providers";
+import { Region } from "src/types/region";
 import { Tarifa } from "./Tarifa";
 import {
     ApiBody,

@@ -3,7 +3,7 @@ import { GetSimuladorFiltersDto } from "./dto/GetSimuladorFiltersDto";
 import { ApiBody, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { GetSimuladorDto } from "./dto/GetSimuladorDto";
 import { ISimuladorService } from "./SimuladorService";
-import { Providers } from "src/Providers";
+import { Providers } from "src/providers";
 
 @Controller("/simulador")
 @ApiTags("Simulador")
