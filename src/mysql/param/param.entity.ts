@@ -1,4 +1,5 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Contrato } from "../contrato/contrato.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { Ponto } from "../ponto/ponto.entity";
 import { Posto } from "src/types/posto";
@@ -35,6 +36,9 @@ export class Param {
     @ApiProperty({ type: Number })
     valor: number;
 
+    @OneToOne(() => Contrato, contrato => contrato.demanda)
+    @ApiProperty({ type: () => Contrato })
+    contrato?: Contrato;
 
     public constructor(param?: Partial<Param>) {
         this.id = param?.id;

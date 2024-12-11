@@ -26,7 +26,7 @@ export class ParamAdapter implements IParamAdapter {
         try {
             return await this.repository.find({
                 where: filters,
-                relations: ["ponto"]
+                relations: ["ponto", "contrato"]
             });
         }
         catch(error) {
@@ -39,7 +39,7 @@ export class ParamAdapter implements IParamAdapter {
         try {
             return await this.repository.findOne({
                 where: { id },
-                relations: ["ponto"]
+                relations: ["ponto", "contrato"]
             });
         }
         catch(error) {

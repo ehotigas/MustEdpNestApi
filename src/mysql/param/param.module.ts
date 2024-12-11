@@ -24,7 +24,8 @@ import { Param } from "./param.entity";
             provide: Providers.ParamService,
             useClass: ParamService
         }
-    ]
+    ],
+    exports: [ Providers.ParamService ]
 })
 export class ParamModule {
 

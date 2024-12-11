@@ -1,3 +1,4 @@
+import { ContratoModule } from "./contrato/contrato.module";
 import { ParamModule } from "./param/param.module";
 import { PontoModule } from "./ponto/ponto.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -18,6 +19,7 @@ import { Module } from "@nestjs/common";
             autoLoadEntities: true,
             synchronize: false,
         }),
+        ContratoModule,
         ParamModule,
         PontoModule
     ]
