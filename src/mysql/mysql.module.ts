@@ -1,3 +1,4 @@
+import { ParamModule } from "./param/param.module";
 import { PontoModule } from "./ponto/ponto.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module } from "@nestjs/common";
@@ -12,10 +13,12 @@ import { Module } from "@nestjs/common";
             username: 'root',
             password: 'root',
             database: 'edp',
-            entities: [__dirname + '/../**/*.entity.ts'],
+            entities: [__dirname + '/../**/*.entity.{ts,js}'],
             migrations: [__dirname + '/../migrations/*.{ts}'],
+            autoLoadEntities: true,
             synchronize: false,
         }),
+        ParamModule,
         PontoModule
     ]
 })

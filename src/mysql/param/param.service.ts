@@ -1,4 +1,5 @@
 import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { GetParamRequestDto } from "./dto/get-param-request.dto";
 import { CreateParamDto } from "./dto/create-param.dto";
 import { UpdateParamDto } from "./dto/update-param.dto";
 import { IPontoService } from "../ponto/ponto.service";
@@ -6,10 +7,7 @@ import { GetParamDto } from "./dto/get-param.dto";
 import { IParamAdapter } from "./param.adapter";
 import { Ponto } from "../ponto/ponto.entity";
 import { Providers } from "src/providers";
-import { Posto } from "src/types/posto";
-import { DataType } from "./data-type";
 import { Param } from "./param.entity";
-import { GetParamRequestDto } from "./dto/get-param-request.dto";
 
 
 export interface IParamService {

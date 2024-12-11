@@ -25,7 +25,8 @@ export class ParamAdapter implements IParamAdapter {
     public async findAll(filters: Param): Promise<Param[]> {
         try {
             return await this.repository.find({
-                where: filters
+                where: filters,
+                relations: ["ponto"]
             });
         }
         catch(error) {
@@ -37,7 +38,8 @@ export class ParamAdapter implements IParamAdapter {
     public async findById(id: number): Promise<Param> {
         try {
             return await this.repository.findOne({
-                where: { id }
+                where: { id },
+                relations: ["ponto"]
             });
         }
         catch(error) {

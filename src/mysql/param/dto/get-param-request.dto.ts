@@ -1,6 +1,5 @@
 import { IsDate, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { Ponto } from "src/mysql/ponto/ponto.entity";
 import { Posto } from "src/types/posto";
 import { DataType } from "../data-type";
 
@@ -9,11 +8,6 @@ export class GetParamRequestDto {
     @IsNumber()
     @ApiPropertyOptional({ type: Number })
     id?: number;
-    
-    @IsOptional()
-    @IsEnum(Ponto)
-    @ApiPropertyOptional({ type: String, enum: Ponto })
-    ponto?: Ponto;
     
     @IsOptional()
     @IsEnum(Posto)
