@@ -1,4 +1,5 @@
 import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { GenerateContractDto } from "./dto/generate-contract.dto";
 import { CreateContratoDto } from "./dto/create-contrato.dto";
 import { UpdateContratoDto } from "./dto/update-contrato.dto";
 import { IParamService } from "../param/param.service";
@@ -9,6 +10,7 @@ import { Providers } from "src/providers";
 
 
 export interface IContratoService {
+    generate(year: number): Promise<GenerateContractDto>;
     save(input: CreateContratoDto): Promise<Contrato>;
     update(id: number, input: UpdateContratoDto): Promise<Contrato>;
     remove(id: number): Promise<Contrato>;
@@ -24,6 +26,13 @@ export class ContratoService implements IContratoService {
         @Inject(Providers.ParamService)
         private readonly paramService: IParamService
     ) {  }
+
+    public async generate(year: number): Promise<GenerateContractDto> {
+        this.logger.log(`Generating contracts for year ${year}`);
+        return {
+            message: await this.adapter.generate(year)
+        };
+    }
 
     public async save(input: CreateContratoDto): Promise<Contrato> {
         this.logger.log(`Saving new contrato`);

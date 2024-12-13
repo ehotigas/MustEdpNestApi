@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, HttpStatus, Inject, Param, Patch, Post, ValidationPipe } from "@nestjs/common";
 import { ApiBody, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { GenerateContractDto } from "./dto/generate-contract.dto";
 import { CreateContratoDto } from "./dto/create-contrato.dto";
 import { UpdateContratoDto } from "./dto/update-contrato.dto";
 import { RequestError } from "src/types/request-error";
@@ -15,6 +16,14 @@ export class ContratoController {
         @Inject(Providers.ContratoService)
         private readonly service: IContratoService
     ) {  }
+
+    @Post("/generate/:year")
+    @ApiParam({ name: "year", type: Number })
+    @ApiResponse({ status: HttpStatus.CREATED, type: GenerateContractDto })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async generate(@Param("year") year: number): Promise<GenerateContractDto> {
+        return await this.service.generate(year);
+    }
 
     @Post()
     @ApiBody({ type: CreateContratoDto })

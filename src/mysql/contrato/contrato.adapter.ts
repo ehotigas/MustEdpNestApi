@@ -1,11 +1,14 @@
-import { Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
+import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
+import { IContratoQueryGenerator } from "./contrato-sql-query";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Contrato } from "./contrato.entity";
-import { Repository } from "typeorm";
 import { Param } from "../param/param.entity";
+import { Contrato } from "./contrato.entity";
+import { Providers } from "src/providers";
+import { Repository } from "typeorm";
 
 
 export interface IContratoAdapter {
+    generate(year: number): Promise<string>;
     findByDemanda(demanda: Param): Promise<Contrato>;
     save(input: Omit<Contrato, "id">): Promise<Contrato>;
     update(id: number, input: Partial<Contrato>): Promise<Contrato>;
@@ -18,8 +21,22 @@ export class ContratoAdapter implements IContratoAdapter {
     private readonly logger = new Logger(ContratoAdapter.name);
     public constructor(
         @InjectRepository(Contrato)
-        private readonly repository: Repository<Contrato>
+        private readonly repository: Repository<Contrato>,
+        @Inject(Providers.ContratoQueryGenerator)
+        private readonly queryGenerator: IContratoQueryGenerator
     ) {  }
+
+    public async generate(year: number): Promise<string> {
+        try {
+            const query = this.queryGenerator.generate(year);
+            await this.repository.query(query);
+            return `Contratos gerados`;
+        }
+        catch (error) {
+            this.logger.error(`Fail to generate contratos for year: ${year}`, error.stack);
+            throw new InternalServerErrorException(`Fail to generate contratos for year: ${year}`, error.message);
+        }
+    }
 
     public async findByDemanda(demanda: Param): Promise<Contrato> {
         try {
