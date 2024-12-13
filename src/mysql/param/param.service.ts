@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { GetParamRequestDto } from "./dto/get-param-request.dto";
 import { CreateParamDto } from "./dto/create-param.dto";
 import { UpdateParamDto } from "./dto/update-param.dto";
@@ -50,6 +50,10 @@ export class ParamService implements IParamService {
     public async save(input: CreateParamDto): Promise<Param> {
         this.logger.log(`Saving new param`);
         const ponto = await this.pontoService.findById(input.ponto);
+        const param = await this.adapter.findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto, input.posto, input.data, input.tipoDado, input.cenario);
+        
+        if (param && input.data < new Date()) throw new BadRequestException(`Fail to save param ${input.tipoDado}, this data param is before than now.`);
+        if (param) return this.update(param.id, input);
         return await this.adapter.save({
             ...input,
             ponto: ponto

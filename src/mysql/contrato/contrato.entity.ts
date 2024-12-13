@@ -14,7 +14,7 @@ export class Contrato {
     @ApiProperty({ type: () => Param })
     demanda: Param;
     
-    @Column({ type: "decimal" })
+    @Column({ type: "decimal", precision: 15, scale: 3 })
     @ApiProperty({ type: Number })
     valor: number;
 }

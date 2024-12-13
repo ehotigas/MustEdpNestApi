@@ -2,9 +2,11 @@ import { Injectable, InternalServerErrorException, Logger } from "@nestjs/common
 import { InjectRepository } from "@nestjs/typeorm";
 import { Contrato } from "./contrato.entity";
 import { Repository } from "typeorm";
+import { Param } from "../param/param.entity";
 
 
 export interface IContratoAdapter {
+    findByDemanda(demanda: Param): Promise<Contrato>;
     save(input: Omit<Contrato, "id">): Promise<Contrato>;
     update(id: number, input: Partial<Contrato>): Promise<Contrato>;
     remove(id: number): Promise<Contrato>;
@@ -18,6 +20,18 @@ export class ContratoAdapter implements IContratoAdapter {
         @InjectRepository(Contrato)
         private readonly repository: Repository<Contrato>
     ) {  }
+
+    public async findByDemanda(demanda: Param): Promise<Contrato> {
+        try {
+            return await this.repository.findOne({
+                where: { demanda }
+            });
+        }
+        catch (error) {
+            this.logger.error(`Fail to find contrato with demanda id: ${demanda.id}`, error.stack);
+            throw new InternalServerErrorException(`Fail to find contrato with demanda id: ${demanda.id}`, error.message);
+        }
+    }
 
     public async save(input: Omit<Contrato, "id">): Promise<Contrato> {
         try {

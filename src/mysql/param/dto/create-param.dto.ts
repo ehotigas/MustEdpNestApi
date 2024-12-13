@@ -1,15 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Region } from "src/types/region";
 import { IsEnum } from "class-validator";
 import { DataType } from "../data-type";
 import { Posto } from "src/types/posto";
 
 
 export class CreateParamDto {
-    @ApiProperty({ type: String, enum: Region })
-    @IsEnum(Region)
-    empresa: Region;
-    
     @ApiProperty({ type: String })
     ponto: string;
     

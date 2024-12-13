@@ -2,12 +2,15 @@ import { Injectable, InternalServerErrorException, Logger } from "@nestjs/common
 import { InjectRepository } from "@nestjs/typeorm";
 import { Param } from "./param.entity";
 import { Repository } from "typeorm";
-
+import { DataType } from "./data-type";
+import { Posto } from "src/types/posto";
+import { Ponto } from "../ponto/ponto.entity";
 
 
 export interface IParamAdapter {
     findAll(filters: Param): Promise<Param[]>;
     findById(id: number): Promise<Param>;
+    findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto: Ponto, posto: Posto, data: Date, tipoDado: DataType, cenario: string): Promise<Param>;
     save(input: Omit<Param, "id">): Promise<Param>;
     update(id: number, input: Partial<Param>): Promise<Param>;
     remove(id: number): Promise<Param>;
@@ -32,6 +35,19 @@ export class ParamAdapter implements IParamAdapter {
         catch(error) {
             this.logger.error(`Fail to find all param`, error.stack);
             throw new InternalServerErrorException(`Fail to find all param`, error.message);
+        }
+    }
+
+    public async findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto: Ponto, posto: Posto, data: Date, tipoDado: DataType, cenario: string): Promise<Param> {
+        try {
+            return await this.repository.findOne({
+                where: { ponto, posto, data, tipoDado, cenario },
+                relations: ["ponto", "contrato"]
+            });
+        }
+        catch(error) {
+            this.logger.error(`Fail to find param with ponto: ${ponto}, posto: ${posto}, data: ${data}, tipoDado: ${tipoDado}, cenario: ${cenario}`, error.stack);
+            throw new InternalServerErrorException(`Fail to find param with ponto: ${ponto}, posto: ${posto}, data: ${data}, tipoDado: ${tipoDado}, cenario: ${cenario}`, error.message);
         }
     }
 

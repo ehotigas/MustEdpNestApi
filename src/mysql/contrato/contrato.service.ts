@@ -31,6 +31,11 @@ export class ContratoService implements IContratoService {
         if (demanda.tipoDado != DataType.DEMANDA) {
             throw new BadRequestException(`Fail to create new contrato, param DataType should be DEMANDA`);
         }
+        const contrato = await this.adapter.findByDemanda(demanda);
+        if (contrato && new Date() >= demanda.data) throw new BadRequestException(`Fail to save contrato, this data is before than now.`);
+        if (contrato) {
+            return await this.adapter.update(contrato.id, { ...contrato, valor: input.valor });
+        }
         return await this.adapter.save({ ...input, demanda: demanda });
     }
 

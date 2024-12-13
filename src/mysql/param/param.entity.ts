@@ -32,7 +32,7 @@ export class Param {
     @ApiProperty({ type: String })
     cenario: string;
 
-    @Column({ type: "decimal" })
+    @Column({ type: "decimal", precision: 15, scale: 3 })
     @ApiProperty({ type: Number })
     valor: number;
 
