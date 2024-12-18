@@ -1,6 +1,10 @@
 import { Body, Controller, Delete, Get, HttpStatus, Inject, Param as NestParam, Patch, Post, Query, ValidationPipe } from "@nestjs/common";
-import { ApiBody, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { CreateManyParamResponseDto } from "./dto/create-many-param-response.dto";
+import { CreateManyParamDto } from "./dto/create-many-param.dto";
+import { GetFilterHeaderDto } from "./dto/get-filter-header.dto";
 import { GetParamRequestDto } from "./dto/get-param-request.dto";
+import { GetParamTableDto } from "./dto/get-param-table.dto";
 import { CreateParamDto } from "./dto/create-param.dto";
 import { UpdateParamDto } from "./dto/update-param.dto";
 import { RequestError } from "src/types/request-error";
@@ -34,12 +38,43 @@ export class ParamController {
         return await this.service.findById(id);
     }
 
+    @Get("/table/:ponto")
+    @ApiParam({ name: "ponto", type: String })
+    @ApiQuery({ name: "ano", type: Number })
+    @ApiQuery({ name: "cenario", type: String })
+    @ApiResponse({ status: HttpStatus.OK, type: GetParamTableDto })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async findParamTable(
+        @NestParam("ponto") ponto: string,
+        @Query("ano") ano: number,
+        @Query("cenario") cenario: string
+    ): Promise<GetParamTableDto> {
+        return await this.service.findParamTable(ponto, ano, cenario);
+    }
+
+    @Get("/filter/header")
+    @ApiResponse({ status: HttpStatus.OK, type: GetFilterHeaderDto })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async getFilterHeader(): Promise<GetFilterHeaderDto> {
+        return await this.service.getFilterHeader();
+    }
+
     @Post()
     @ApiBody({ type: CreateParamDto })
     @ApiResponse({ status: HttpStatus.CREATED, type: Param })
+    @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: RequestError })
     @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
     public async save(@Body(new ValidationPipe()) input: CreateParamDto): Promise<Param> {
         return await this.service.save(input);
+    }
+
+    @Post("/many")
+    @ApiBody({ type: CreateManyParamDto })
+    @ApiResponse({ status: HttpStatus.CREATED, type: CreateManyParamResponseDto })
+    @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: RequestError })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async saveMany(@Body(new ValidationPipe()) input: CreateManyParamDto): Promise<CreateManyParamResponseDto> {
+        return await this.service.saveMany(input);
     }
 
     @Patch("/:id")

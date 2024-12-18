@@ -7,7 +7,7 @@ export class CreateContratoDto {
     @IsNumber()
     demanda: number;
     
-    @ApiProperty({ type: Number })
+    @ApiProperty({ type: Number, nullable: true })
     @IsNumber()
     valor: number;
 }

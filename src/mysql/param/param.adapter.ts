@@ -1,16 +1,20 @@
 import { Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
+import { GetFilterHeaderDto } from "./dto/get-filter-header.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Param } from "./param.entity";
-import { Repository } from "typeorm";
-import { DataType } from "./data-type";
-import { Posto } from "src/types/posto";
 import { Ponto } from "../ponto/ponto.entity";
+import { ParamTable } from "./param-table";
+import { Posto } from "src/types/posto";
+import { Param } from "./param.entity";
+import { DataType } from "./data-type";
+import { Repository } from "typeorm";
 
 
 export interface IParamAdapter {
     findAll(filters: Param): Promise<Param[]>;
     findById(id: number): Promise<Param>;
     findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto: Ponto, posto: Posto, data: Date, tipoDado: DataType, cenario: string): Promise<Param>;
+    findParamTable(ponto: string, ano: number, cenario: string): Promise<ParamTable[]>;
+    getFilterHeader(): Promise<GetFilterHeaderDto>;
     save(input: Omit<Param, "id">): Promise<Param>;
     update(id: number, input: Partial<Param>): Promise<Param>;
     remove(id: number): Promise<Param>;
@@ -61,6 +65,88 @@ export class ParamAdapter implements IParamAdapter {
         catch(error) {
             this.logger.error(`Fail to find param with id: ${id}`, error.stack);
             throw new InternalServerErrorException(`Fail to find param with id: ${id}`, error.message);
+        }
+    }
+
+    public async getFilterHeader(): Promise<GetFilterHeaderDto> {
+        try {
+            const anoList: { year: string }[] = await this.repository.query(
+                `select distinct year(data) as year from edp.param order by year(data) desc;`
+            );
+            const cenarioList: { cenario: string }[] = await this.repository.query(`select distinct cenario from edp.param where cenario not in ('null', 'DRA', 'DRP');`);
+            return {
+                ano: anoList.map((value) => value.year),
+                cenario: cenarioList.map((value) => value.cenario).filter(cenario => !['null', 'DRA', 'DRP'].includes(cenario))
+            };
+        }
+        catch(error) {
+            this.logger.error(`Fail fetch filter headers`, error.stack);
+            throw new InternalServerErrorException(`Fail fetch filter headers`, error.message);
+        }
+    }
+
+    public async findParamTable(ponto: string, ano: number, cenario: string): Promise<ParamTable[]> {
+        try {
+            return await this.repository.query(`
+                with demanda as (
+                select
+                    pontoId as ponto,
+                    data,
+                    posto,
+                    valor as demanda
+                from edp.param where year(data) = ${ano} and tipo_dado = 'DEMANDA' and pontoId = '${ponto}' and cenario = '${cenario}'
+            ), confiabilidade as (
+                select
+                    pontoId as ponto,
+                    data,
+                    posto,
+                    valor as confiabilidade
+                from edp.param where year(data) = ${ano} and tipo_dado = 'CONFIABILIDADE' and pontoId = '${ponto}'
+            ), tarifa_dra as (
+                select
+                    pontoId as ponto,
+                    data,
+                    posto,
+                    valor as dra
+                from edp.param where year(data) = ${ano} and tipo_dado = 'TARIFA' and pontoId = '${ponto}' and cenario = 'DRA'
+            ), tarifa_drp as (
+                select
+                    pontoId as ponto,
+                    data,
+                    posto,
+                    valor as drp
+                from edp.param where year(data) = ${ano} and tipo_dado = 'TARIFA' and pontoId = '${ponto}' and cenario = 'DRP'
+            ), ponto_data as (
+                select distinct
+                    pontoId as ponto,
+                    data
+                from edp.param where year(data) = ${ano} and pontoId = '${ponto}'
+            )
+            select
+                a.*,
+                b.demanda as demandaPonta,
+                f.demanda as demandaForaPonta,
+                c.confiabilidade as confiabilidadePonta,
+                g.confiabilidade as confiabilidadeForaPonta,
+                d.dra as draPonta,
+                h.dra as draForaPonta,
+                e.drp as drpPonta,
+                i.drp as drpForaPonta
+            from ponto_data a
+                left join demanda b on a.data = b.data and a.ponto = b.ponto and b.posto = 'Ponta'
+                left join confiabilidade c on a.data = c.data and a.ponto = c.ponto and c.posto = 'Ponta'
+                left join tarifa_dra d on a.data = d.data and a.ponto = d.ponto and d.posto = 'Ponta'
+                left join tarifa_drp e on a.data = e.data and a.ponto = e.ponto and e.posto = 'Ponta'
+                left join demanda f on a.data = f.data and a.ponto = f.ponto and f.posto = 'Fora Ponta'
+                left join confiabilidade g on a.data = g.data and a.ponto = g.ponto and g.posto = 'Fora Ponta'
+                left join tarifa_dra h on a.data = h.data and a.ponto = h.ponto and h.posto = 'Fora Ponta'
+                left join tarifa_drp i on a.data = i.data and a.ponto = i.ponto and i.posto = 'Fora Ponta'
+                order by a.data asc;
+            `);
+        }
+        catch(error) {
+            this.logger.error(`Fail fetch param table`, error.stack);
+            throw new InternalServerErrorException(`Fail fetch param table`, error.message);
         }
     }
 

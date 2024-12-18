@@ -1,4 +1,6 @@
 import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { CreateManyParamResponseDto } from "./dto/create-many-param-response.dto";
+import { CreateManyParamDto } from "./dto/create-many-param.dto";
 import { GetParamRequestDto } from "./dto/get-param-request.dto";
 import { CreateParamDto } from "./dto/create-param.dto";
 import { UpdateParamDto } from "./dto/update-param.dto";
@@ -8,12 +10,20 @@ import { IParamAdapter } from "./param.adapter";
 import { Ponto } from "../ponto/ponto.entity";
 import { Providers } from "src/providers";
 import { Param } from "./param.entity";
+import { DataType } from "./data-type";
+import { Posto } from "src/types/posto";
+import { GetFilterHeaderDto } from "./dto/get-filter-header.dto";
+import { GetParamTableDto } from "./dto/get-param-table.dto";
 
 
 export interface IParamService {
     findAll(filters: GetParamRequestDto): Promise<GetParamDto>;
     findById(id: number): Promise<Param>;
+    findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto: Ponto, posto: Posto, data: Date, tipoDado: DataType, cenario: string): Promise<Param>;
+    findParamTable(ponto: string, ano: number, cenario: string): Promise<GetParamTableDto>;
+    getFilterHeader(): Promise<GetFilterHeaderDto>;
     save(input: CreateParamDto): Promise<Param>;
+    saveMany(input: CreateManyParamDto): Promise<CreateManyParamResponseDto>;
     update(id: number, input: UpdateParamDto): Promise<Param>;
     remove(id: number): Promise<Param>;
 }
@@ -47,19 +57,51 @@ export class ParamService implements IParamService {
         return param;
     }
 
+    public async findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto: Ponto, posto: Posto, data: Date, tipoDado: DataType, cenario: string): Promise<Param> {
+        this.logger.log(`Fetching param with ponto: ${ponto}, posto: ${posto}, data: ${data}, tipoDado: ${tipoDado}, cenario: ${cenario}`);
+        return await this.adapter.findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto, posto, data, tipoDado, cenario);
+    }
+
+    public async findParamTable(ponto: string, ano: number, cenario: string): Promise<GetParamTableDto> {
+        this.logger.log(`fetching param table with: ponto: ${ponto}, ano: ${ano}, cenario: ${cenario}`);
+        return {
+            table: await this.adapter.findParamTable(ponto, ano, cenario)
+        };
+    }
+
+    public async getFilterHeader(): Promise<GetFilterHeaderDto> {
+        this.logger.log(`Fetching filter headers`);
+        return await this.adapter.getFilterHeader();
+    }
+
     public async save(input: CreateParamDto): Promise<Param> {
         this.logger.log(`Saving new param`);
         const ponto = await this.pontoService.findById(input.ponto);
+        if (input.tipoDado === DataType.CONFIABILIDADE) {
+            input.cenario = null;
+        }
+        if (input.tipoDado === DataType.TARIFA && !["DRA", "DRP"].includes(input.cenario)) {
+            throw new BadRequestException(`Fail to save new param. Tarifa's cenario should be ("DRA", "DRP")`);
+        }
+        if (input.tipoDado === DataType.DEMANDA && new Date(input.data) < new Date()) {
+            input.cenario = "Realizado";
+        }
+        // if (param && input.data < new Date()) throw new BadRequestException(`Fail to save param ${input.tipoDado}, this data param is before than now.`);
         const param = await this.adapter.findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto, input.posto, input.data, input.tipoDado, input.cenario);
-        
-        if (param && input.data < new Date()) throw new BadRequestException(`Fail to save param ${input.tipoDado}, this data param is before than now.`);
-        if (param) return this.update(param.id, input);
+        if (param) return await this.update(param.id, input);
         return await this.adapter.save({
             ...input,
             ponto: ponto
         });
-
     }
+
+    public async saveMany(input: CreateManyParamDto): Promise<CreateManyParamResponseDto> {
+        for (let inputIndex = 0; inputIndex < input.payload.length; inputIndex++) {
+            await this.save(input.payload[inputIndex]);
+        }
+        return { ok: true };
+    }
+    
 
     public async update(id: number, input: UpdateParamDto): Promise<Param> {
         this.logger.log(`Updating param with id: ${id}`);

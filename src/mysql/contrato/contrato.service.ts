@@ -1,8 +1,12 @@
 import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { CreateManyByDemandaResponseDto } from "./dto/create-many-by-demanda-response.dto";
+import { CreateManyByDemandaDto } from "./dto/create-many-by-demanda.dto";
 import { GenerateContractDto } from "./dto/generate-contract.dto";
+import { CreateByDemandaDto } from "./dto/create-by-demanda.dto";
 import { CreateContratoDto } from "./dto/create-contrato.dto";
 import { UpdateContratoDto } from "./dto/update-contrato.dto";
 import { IParamService } from "../param/param.service";
+import { IPontoService } from "../ponto/ponto.service";
 import { IContratoAdapter } from "./contrato.adapter";
 import { DataType } from "../param/data-type";
 import { Contrato } from "./contrato.entity";
@@ -12,6 +16,8 @@ import { Providers } from "src/providers";
 export interface IContratoService {
     generate(year: number): Promise<GenerateContractDto>;
     save(input: CreateContratoDto): Promise<Contrato>;
+    saveByDemanda(input: CreateByDemandaDto): Promise<Contrato>;
+    saveManyByDemanda(input: CreateManyByDemandaDto): Promise<CreateManyByDemandaResponseDto>;
     update(id: number, input: UpdateContratoDto): Promise<Contrato>;
     remove(id: number): Promise<Contrato>;
 }
@@ -24,7 +30,9 @@ export class ContratoService implements IContratoService {
         @Inject(Providers.ContratoAdapter)
         private readonly adapter: IContratoAdapter,
         @Inject(Providers.ParamService)
-        private readonly paramService: IParamService
+        private readonly paramService: IParamService,
+        @Inject(Providers.PontoService)
+        private readonly pontoService: IPontoService,
     ) {  }
 
     public async generate(year: number): Promise<GenerateContractDto> {
@@ -34,14 +42,35 @@ export class ContratoService implements IContratoService {
         };
     }
 
+    public async saveByDemanda(input: CreateByDemandaDto): Promise<Contrato> {
+        this.logger.log(`Saving new contrato by demanda`);
+        const ponto = await this.pontoService.findById(input.ponto);
+        let demanda = await this.paramService.findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto, input.posto, input.data, DataType.DEMANDA, input.cenario);
+        if (new Date(input.data) < new Date()) {
+            input.cenario = "Realizado";
+        }
+        if (!demanda) {
+            demanda = await this.paramService.save({ ...input, tipoDado: DataType.DEMANDA, valor: null });
+        }
+        return await this.save({ demanda: demanda.id, valor: input.valor });
+    }
+
+    public async saveManyByDemanda(input: CreateManyByDemandaDto): Promise<CreateManyByDemandaResponseDto> {
+        this.logger.log(`Saving many contrato by demanda`);
+        for (const payload of input.payload) {
+            await this.saveByDemanda(payload);
+        }
+        return { ok: true };
+    }
+
     public async save(input: CreateContratoDto): Promise<Contrato> {
         this.logger.log(`Saving new contrato`);
         const demanda = await this.paramService.findById(input.demanda);
-        if (demanda.tipoDado != DataType.DEMANDA) {
+        if (demanda.tipoDado !== DataType.DEMANDA) {
             throw new BadRequestException(`Fail to create new contrato, param DataType should be DEMANDA`);
         }
         const contrato = await this.adapter.findByDemanda(demanda);
-        if (contrato && new Date() >= demanda.data) throw new BadRequestException(`Fail to save contrato, this data is before than now.`);
+        // if (contrato && new Date() >= demanda.data) throw new BadRequestException(`Fail to save contrato, this data is before than now.`);
         if (contrato) {
             return await this.adapter.update(contrato.id, { ...contrato, valor: input.valor });
         }

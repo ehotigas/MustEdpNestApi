@@ -28,11 +28,11 @@ export class Param {
     @ApiProperty({ type: String, enum: DataType })
     tipoDado: DataType;
 
-    @Column({ type: String })
+    @Column({ type: String, nullable: true })
     @ApiProperty({ type: String })
     cenario: string;
 
-    @Column({ type: "decimal", precision: 15, scale: 3 })
+    @Column({ type: "decimal", precision: 15, scale: 3, nullable: true })
     @ApiProperty({ type: Number })
     valor: number;
 

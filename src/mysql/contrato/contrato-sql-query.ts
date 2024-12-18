@@ -1,12 +1,14 @@
 export interface IContratoQueryGenerator {
-    generate(year: number): string;
+    generate(year: number): string[];
 }
 
 export class ContratoQueryGenerator {
-    public generate(year: number): string {
+    private dropTempContrato(): string {
+        return `drop temporary table if exists temp_contrato;`
+    }
+
+    private createTempContrato(year: number): string {
         return `
-            -- Remover contratos
-            drop temporary table if exists temp_contrato;
             create temporary table temp_contrato as
             with demanda as (
                 select * from param where tipo_dado = 'DEMANDA' and year(data) = ${year}
@@ -16,19 +18,31 @@ export class ContratoQueryGenerator {
                 from contrato a inner join demanda b on (a.demandaId = b.id)
             )
             select * from temp_contrato;
+        `;
+    }
 
-            delete contrato from edp.contrato as contrato inner join temp_contrato as temp on contrato.id = temp.id;
+    private deleteOldContratos(): string {
+        return `delete contrato from edp.contrato as contrato inner join temp_contrato as temp on contrato.id = temp.id;`;
+    }
 
-            drop temporary table if exists temp_contrato;
+    private dropRangeTable(): string {
+        return `drop temporary table if exists range_contrato;`;
+    }
 
-            -- Range 
-            drop temporary table if exists range_contrato;
-            drop procedure if exists gerar_range;
+    private dropProcedure(): string {
+        return `drop procedure if exists gerar_range;`;
+    }
+
+    private createRangeTable(): string {
+        return `
             create temporary table range_contrato (
                 sugestao_contrato decimal(10, 1)
             );
+        `;
+    }
 
-            delimiter //
+    private createProcedure(): string {
+        return `
             create procedure gerar_range()
             begin
                 declare valor decimal(10, 1) default 0.0;
@@ -36,16 +50,19 @@ export class ContratoQueryGenerator {
                     insert into range_contrato (sugestao_contrato) values (valor);
                     set valor = valor + 0.1;
                 end while;
-            end //
-            delimiter ;
+            end;
+        `;
+    }
+    private callProcedure(): string {
+        return `call gerar_range();`;
+    }
 
-            call gerar_range();
+    private dropSugestaoContrato(): string {
+        return `drop temporary table if exists sugestao_contrato;`;
+    }
 
-            drop procedure if exists gerar_range;
-
-
-            -- Bases
-            drop temporary table if exists sugestao_contrato;
+    private createSugestaoContratoTable(year: number): string {
+        return `
             create temporary table sugestao_contrato as
             with tarifa as (
                 select * from edp.param where tipo_dado = 'TARIFA' and cenario = 'DRP'
@@ -58,11 +75,10 @@ export class ContratoQueryGenerator {
                     a.pontoId as ponto,
                     a.posto,
                     year(a.data) + 1 as ano,
-                    a.cenario as tipo_demanda,
                     b.valor as contrato
                 from demanda a
                     inner join contrato b on a.id = b.demandaId
-                    where month(a.data) = 12
+                    where month(a.data) = 12 and a.cenario = 'Realizado'
             ), base_parametros as (
                 select
                     a.id as demanda_id,
@@ -80,7 +96,7 @@ export class ContratoQueryGenerator {
                     left join tarifa b on a.pontoId = b.pontoId and a.data = b.data and a.posto = b.posto
                     left join confiabilidade c on a.pontoId = c.pontoId and a.data = c.data and a.posto = c.posto
                     left join edp.contrato d on a.id = d.demandaId
-                    left join ultimo_contrato e on a.pontoId = e.ponto and year(a.data) = e.ano and a.posto = e.posto and a.cenario = e.tipo_demanda
+                    left join ultimo_contrato e on a.pontoId = e.ponto and year(a.data) = e.ano and a.posto = e.posto
                     where year(a.data) = ${year}
             ), sugestao_contrato as (
                 select
@@ -97,10 +113,15 @@ export class ContratoQueryGenerator {
                     )
             )
             select * from sugestao_contrato order by sugestao_contrato_id, data;
+        `;
+    }
 
+    private dropPis(): string {
+        return `drop temporary table if exists pis;`;
+    }
 
-            -- Pis
-            drop temporary table if exists pis;
+    private createPisTable(): string {
+        return `
             create temporary table pis as
             select
                 ponto,
@@ -119,9 +140,15 @@ export class ContratoQueryGenerator {
                 end as pis
             from sugestao_contrato
                 group by ponto, posto, year(data), tipo_demanda, sugestao_contrato_id;
+        `;
+    }
 
+    private dropSimuladorTable(): string {
+        return `drop temporary table if exists base_simulador;`
+    }
 
-            drop temporary table if exists base_simulador;
+    private createSimuladorTable(): string {
+        return `
             create temporary table base_simulador as
             with custo as (
                 select
@@ -157,16 +184,41 @@ export class ContratoQueryGenerator {
                     sum(valor_eust + valor_add + valor_piu + valor_pis) over (partition by ponto, posto, tipo_demanda, year(data), sugestao_contrato_id) as custo_total_anual
                 from custo
             ) a order by ponto, tipo_demanda, data;
+        `;
+    }
 
-            -- Inserir novos contratos
+    public insertIntoContratos(): string {
+        return `
             insert into contrato (valor, demandaId)
             select sugestao_contrato as valor, demanda_id as demandaId from base_simulador where id = 1 order by ponto, tipo_demanda, data;
-
-
-            drop temporary table if exists range_contrato;
-            drop temporary table if exists sugestao_contrato;
-            drop temporary table if exists pis;
-            drop temporary table if exists base_simulador;
         `;
+    }
+
+
+    
+    public generate(year: number): string[] {
+        return [
+            this.dropTempContrato(),
+            this.createTempContrato(year),
+            this.deleteOldContratos(),
+            this.dropTempContrato(),
+            this.dropRangeTable(),
+            this.dropProcedure(),
+            this.createRangeTable(),
+            this.createProcedure(),
+            this.callProcedure(),
+            this.dropProcedure(),
+            this.dropSugestaoContrato(),
+            this.createSugestaoContratoTable(year),
+            this.dropPis(),
+            this.createPisTable(),
+            this.dropSimuladorTable(),
+            this.createSimuladorTable(),
+            this.insertIntoContratos(),
+            this.dropRangeTable(),
+            this.dropSugestaoContrato(),
+            this.dropPis(),
+            this.dropSimuladorTable()
+        ];
     }
 }

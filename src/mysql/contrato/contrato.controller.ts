@@ -1,12 +1,15 @@
 import { Body, Controller, Delete, HttpStatus, Inject, Param, Patch, Post, ValidationPipe } from "@nestjs/common";
 import { ApiBody, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { GenerateContractDto } from "./dto/generate-contract.dto";
+import { CreateByDemandaDto } from "./dto/create-by-demanda.dto";
 import { CreateContratoDto } from "./dto/create-contrato.dto";
 import { UpdateContratoDto } from "./dto/update-contrato.dto";
 import { RequestError } from "src/types/request-error";
 import { IContratoService } from "./contrato.service";
 import { Contrato } from "./contrato.entity";
 import { Providers } from "src/providers";
+import { CreateManyByDemandaDto } from "./dto/create-many-by-demanda.dto";
+import { CreateManyByDemandaResponseDto } from "./dto/create-many-by-demanda-response.dto";
 
 
 @Controller("/contrato")
@@ -32,6 +35,24 @@ export class ContratoController {
     @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
     public async save(@Body(new ValidationPipe()) input: CreateContratoDto): Promise<Contrato> {
         return await this.service.save(input);
+    }
+
+    @Post("/demanda")
+    @ApiBody({ type: CreateByDemandaDto })
+    @ApiResponse({ status: HttpStatus.CREATED, type: Contrato })
+    @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: RequestError })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async saveByDemanda(@Body(new ValidationPipe()) input: CreateByDemandaDto): Promise<Contrato> {
+        return await this.service.saveByDemanda(input);
+    }
+
+    @Post("/demanda/many")
+    @ApiBody({ type: CreateManyByDemandaDto })
+    @ApiResponse({ status: HttpStatus.CREATED, type: Contrato })
+    @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: RequestError })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async saveManyByDemanda(@Body(new ValidationPipe()) input: CreateManyByDemandaDto): Promise<CreateManyByDemandaResponseDto> {
+        return await this.service.saveManyByDemanda(input);
     }
 
     @Patch("/:id")

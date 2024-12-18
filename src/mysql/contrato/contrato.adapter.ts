@@ -28,8 +28,11 @@ export class ContratoAdapter implements IContratoAdapter {
 
     public async generate(year: number): Promise<string> {
         try {
-            const query = this.queryGenerator.generate(year);
-            await this.repository.query(query);
+            const queryList = this.queryGenerator.generate(year);
+
+            for (const query of queryList) {
+                await this.repository.query(query);
+            }
             return `Contratos gerados`;
         }
         catch (error) {
