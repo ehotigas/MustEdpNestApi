@@ -1,7 +1,10 @@
 import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { CreateManyParamResponseDto } from "./dto/create-many-param-response.dto";
+import { RemoveDemandaByCenarioDto } from "./dto/remove-demanda-by-cenario.dto";
 import { CreateManyParamDto } from "./dto/create-many-param.dto";
+import { GetFilterHeaderDto } from "./dto/get-filter-header.dto";
 import { GetParamRequestDto } from "./dto/get-param-request.dto";
+import { GetParamTableDto } from "./dto/get-param-table.dto";
 import { CreateParamDto } from "./dto/create-param.dto";
 import { UpdateParamDto } from "./dto/update-param.dto";
 import { IPontoService } from "../ponto/ponto.service";
@@ -12,8 +15,6 @@ import { Providers } from "src/providers";
 import { Param } from "./param.entity";
 import { DataType } from "./data-type";
 import { Posto } from "src/types/posto";
-import { GetFilterHeaderDto } from "./dto/get-filter-header.dto";
-import { GetParamTableDto } from "./dto/get-param-table.dto";
 
 
 export interface IParamService {
@@ -26,6 +27,7 @@ export interface IParamService {
     saveMany(input: CreateManyParamDto): Promise<CreateManyParamResponseDto>;
     update(id: number, input: UpdateParamDto): Promise<Param>;
     remove(id: number): Promise<Param>;
+    removeDemandaByCenario(cenario: string): Promise<RemoveDemandaByCenarioDto>;
 }
 
 
@@ -130,5 +132,11 @@ export class ParamService implements IParamService {
             throw new NotFoundException(`Fail to remove param with id: ${id}. Not found.`);
         }
         return await this.adapter.remove(id);
+    }
+
+    public async removeDemandaByCenario(cenario: string): Promise<RemoveDemandaByCenarioDto> {
+        return {
+            ok: await this.adapter.removeDemandaByCenario(cenario)
+        };
     }
 }

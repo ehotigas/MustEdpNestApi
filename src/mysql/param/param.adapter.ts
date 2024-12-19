@@ -18,6 +18,7 @@ export interface IParamAdapter {
     save(input: Omit<Param, "id">): Promise<Param>;
     update(id: number, input: Partial<Param>): Promise<Param>;
     remove(id: number): Promise<Param>;
+    removeDemandaByCenario(cenario: string): Promise<boolean>;
 }
 
 
@@ -183,6 +184,17 @@ export class ParamAdapter implements IParamAdapter {
         catch(error) {
             this.logger.error(`Fail to remove param with id: ${id}`, error.stack);
             throw new InternalServerErrorException(`Fail to remove param with id: ${id}`, error.message);
+        }
+    }
+
+    public async removeDemandaByCenario(cenario: string): Promise<boolean> {
+        try {
+            await this.repository.query(`delete from edp.param where tipo_dado = 'DEMANDA' and cenario = '${cenario}';`);
+            return true;
+        }
+        catch(error) {
+            this.logger.error(`Fail to remove param with cenario: ${cenario}`, error.stack);
+            throw new InternalServerErrorException(`Fail to remove param with cenario: ${cenario}`, error.message);
         }
     }
 }

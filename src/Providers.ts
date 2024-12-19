@@ -6,4 +6,7 @@ export enum Providers {
     ParamService = "ParamService",
     PontoAdapter = "PontoAdapter",
     PontoService = "PontoService",
+    SimuladorAdapter = "SimuladorAdapter",
+    SimuladorService = "SimuladorService",
+    SimuladorQueryBuilder = "SimuladorQueryBuilder",
 }

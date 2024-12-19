@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, HttpStatus, Inject, Param as NestParam, Patch, Post, Query, ValidationPipe } from "@nestjs/common";
 import { ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreateManyParamResponseDto } from "./dto/create-many-param-response.dto";
+import { RemoveDemandaByCenarioDto } from "./dto/remove-demanda-by-cenario.dto";
 import { CreateManyParamDto } from "./dto/create-many-param.dto";
 import { GetFilterHeaderDto } from "./dto/get-filter-header.dto";
 import { GetParamRequestDto } from "./dto/get-param-request.dto";
@@ -94,6 +95,16 @@ export class ParamController {
     @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
     public async remove(@NestParam("id") id: number): Promise<Param> {
         return await this.service.remove(id);
+    }
+
+
+    @Delete("/cenario/:cenario")
+    @ApiParam({ name: "cenario", type: String })
+    @ApiResponse({ status: HttpStatus.OK, type: Param })
+    @ApiResponse({ status: HttpStatus.NOT_FOUND, type: RequestError })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async removeDemandaByCenario(@NestParam("cenario") cenario: string): Promise<RemoveDemandaByCenarioDto> {
+        return await this.service.removeDemandaByCenario(cenario);
     }
 
 }
