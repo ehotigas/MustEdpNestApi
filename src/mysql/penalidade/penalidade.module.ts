@@ -1,3 +1,4 @@
+import { PenalidadeQueryBuilder } from "./penalidade-query-builder";
 import { PenalidadeController } from "./penalidade.controller";
 import { PenalidadeAdapter } from "./penalidade.adapter";
 import { PenalidadeService } from "./penalidade.service";
@@ -19,6 +20,10 @@ import { Providers } from "src/Providers";
         {
             provide: Providers.PenalidadeService,
             useClass: PenalidadeService
+        },
+        {
+            provide: Providers.PenalidadeQueryBuilder,
+            useClass: PenalidadeQueryBuilder
         }
     ]
 })
