@@ -1,12 +1,14 @@
 import { Injectable } from "@nestjs/common";
+import { Posto } from "src/types/posto";
 
 
 export interface IPenalidadeQueryBuilder {
     dropCustosTable(): string;
-    createCustosTable(): string;
+    createCustosTable(year: number): string;
     dropPisTable(): string;
     createPisTable(): string;
     getPenalityData(): string;
+    getPenalidadeChart(ponto: string, posto: Posto, contrato: string, demanda: string): string;
 }
 
 
@@ -16,7 +18,7 @@ export class PenalidadeQueryBuilder implements IPenalidadeQueryBuilder {
         return `drop temporary table if exists base_custos;`;
     }
 
-    public createCustosTable(): string {
+    public createCustosTable(year: number): string {
         return `
             create temporary table base_custos as
             with contratos as (
@@ -27,7 +29,7 @@ export class PenalidadeQueryBuilder implements IPenalidadeQueryBuilder {
                     a.cenario as tipo_contrato,
                     b.valor as contrato
                 from edp.param a inner join edp.contrato b on a.id = b.demandaId
-                    where year(a.data) = 2025
+                    where year(a.data) = ${year}
             ), demanda as (
                 select
                     pontoId,
@@ -35,21 +37,21 @@ export class PenalidadeQueryBuilder implements IPenalidadeQueryBuilder {
                     posto,
                     cenario as tipo_demanda,
                     valor as demanda
-                from edp.param where tipo_dado = 'DEMANDA' and year(data) = 2025
+                from edp.param where tipo_dado = 'DEMANDA' and year(data) = ${year}
             ), confiabilidade as (
                 select
                     pontoId,
                     data,
                     posto,
                     valor as confiabilidade
-                from edp.param where tipo_dado = 'CONFIABILIDADE' and year(data) = 2025
+                from edp.param where tipo_dado = 'CONFIABILIDADE' and year(data) = ${year}
             ), tarifa as (
                 select
                     pontoId,
                     data,
                     posto,
                     valor as tarifa
-                from edp.param where tipo_dado = 'TARIFA' and cenario = 'DRP' and year(data) = 2025
+                from edp.param where tipo_dado = 'TARIFA' and cenario = 'DRP' and year(data) = ${year}
             )
             select
                 a.pontoId as ponto,
@@ -61,13 +63,13 @@ export class PenalidadeQueryBuilder implements IPenalidadeQueryBuilder {
                 b.demanda,
                 c.confiabilidade,
                 d.tarifa,
-                a.contrato * d.tarifa as eust,
+                a.contrato * d.tarifa/1000000 as eust,
                 case
-                    when b.demanda > a.contrato then d.tarifa * (b.demanda - a.contrato)
+                    when b.demanda > a.contrato then d.tarifa * (b.demanda - a.contrato)/1000000
                     else 0
                 end as \`add\`,
                 case
-                    when b.demanda > a.contrato * 1.1 then d.tarifa * (b.demanda - a.contrato) * 3
+                    when b.demanda > a.contrato * 1.1 then d.tarifa * (b.demanda - a.contrato) * 3/1000000
                     else 0
                 end as piu
             from contratos a
@@ -95,7 +97,7 @@ export class PenalidadeQueryBuilder implements IPenalidadeQueryBuilder {
                 max(demanda) as demanda,
                 max(tarifa) as tarifa,
                 case 
-                    when min(contrato)*0.9 - max(confiabilidade) > max(demanda) then ((min(contrato) * 0.9 - max(confiabilidade)) - max(demanda)) * 12 * max(tarifa)
+                    when min(contrato)*0.9 - max(confiabilidade) > max(demanda) then ((min(contrato) * 0.9 - max(confiabilidade)) - max(demanda)) * 12 * max(tarifa)/1000000
                     else 0
                 end as pis
             from base_custos
@@ -120,6 +122,26 @@ export class PenalidadeQueryBuilder implements IPenalidadeQueryBuilder {
                     )
             )
             select * from custos where penalidades > 0 and penalidades > \`add\` order by penalidades desc;
+        `;
+    }
+
+    public getPenalidadeChart(ponto: string, posto: Posto, contrato: string, demanda: string): string {
+        return `
+            with custos as (
+                select
+                    a.*,
+                    coalesce(b.pis, 0) as pis,
+                    coalesce(b.pis, 0) + \`add\` + piu as penalidades
+                from base_custos a
+                    left join pis b on (
+                        a.ponto = b.ponto and
+                        a.posto = b.posto and
+                        month(a.data) = 12 and
+                        a.tipoDemanda = b.tipoDemanda and
+                        a.tipoContrato = b.tipoContrato
+                    )
+            )
+            select * from custos where ponto = '${ponto}' and tipoContrato = '${contrato}' and tipoDemanda = '${demanda}' and posto = '${posto}' order by data asc;
         `;
     }
 }
