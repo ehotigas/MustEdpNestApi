@@ -1,3 +1,4 @@
+import { PenalidadeModule } from "./penalidade/penalidade.module";
 import { SimuladorModule } from "./simulador/simulador.module";
 import { ContratoModule } from "./contrato/contrato.module";
 import { ParamModule } from "./param/param.module";
@@ -22,6 +23,7 @@ import { Module } from "@nestjs/common";
         }),
         ContratoModule,
         ParamModule,
+        PenalidadeModule,
         PontoModule,
         SimuladorModule
     ]
