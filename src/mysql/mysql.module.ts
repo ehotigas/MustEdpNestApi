@@ -1,9 +1,9 @@
+import { SimuladorModule } from "./simulador/simulador.module";
 import { ContratoModule } from "./contrato/contrato.module";
 import { ParamModule } from "./param/param.module";
 import { PontoModule } from "./ponto/ponto.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module } from "@nestjs/common";
-import { SimuladorModule } from "./simulador/simulador.module";
 
 
 @Module({

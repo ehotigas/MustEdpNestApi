@@ -1,8 +1,11 @@
 import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { CreateManyByDemandaResponseDto } from "./dto/create-many-by-demanda-response.dto";
+import { GetContratoTableFilterDto } from "./dto/get-contrato-table-filter.dto";
 import { CreateManyByDemandaDto } from "./dto/create-many-by-demanda.dto";
+import { GetContratoTableDto } from "./dto/get-contrato-table.dto";
 import { GenerateContractDto } from "./dto/generate-contract.dto";
 import { CreateByDemandaDto } from "./dto/create-by-demanda.dto";
+import { RemoveByCenarioDto } from "./dto/remove-by-cenario.dto";
 import { CreateContratoDto } from "./dto/create-contrato.dto";
 import { UpdateContratoDto } from "./dto/update-contrato.dto";
 import { IParamService } from "../param/param.service";
@@ -14,12 +17,15 @@ import { Providers } from "src/providers";
 
 
 export interface IContratoService {
+    findContratoTable(ponto: string, ano: number, cenario: string): Promise<GetContratoTableDto>;
     generate(year: number): Promise<GenerateContractDto>;
     save(input: CreateContratoDto): Promise<Contrato>;
+    findTableFilters(): Promise<GetContratoTableFilterDto>;
     saveByDemanda(input: CreateByDemandaDto): Promise<Contrato>;
     saveManyByDemanda(input: CreateManyByDemandaDto): Promise<CreateManyByDemandaResponseDto>;
     update(id: number, input: UpdateContratoDto): Promise<Contrato>;
     remove(id: number): Promise<Contrato>;
+    removeByCenario(cenario: string): Promise<RemoveByCenarioDto>;
 }
 
 
@@ -34,6 +40,20 @@ export class ContratoService implements IContratoService {
         @Inject(Providers.PontoService)
         private readonly pontoService: IPontoService,
     ) {  }
+
+    public async findContratoTable(ponto: string, ano: number, cenario: string): Promise<GetContratoTableDto> {
+        this.logger.log(`Fetching contrato table for ponto: ${ponto}, ano: ${ano}, cenario: ${cenario}`);
+        return {
+            data: await this.adapter.findContratoTable(ponto, ano, cenario)
+        }
+    }
+
+    public async findTableFilters(): Promise<GetContratoTableFilterDto> {
+        this.logger.log(`Fetching contrato table filter options`);
+        return await this.adapter.findTableFilters();
+    }
+
+
 
     public async generate(year: number): Promise<GenerateContractDto> {
         this.logger.log(`Generating contracts for year ${year}`);
@@ -95,5 +115,12 @@ export class ContratoService implements IContratoService {
             throw new NotFoundException(`Fail to remove contrato with id: ${id}. Not found.`);
         }
         return contrato;
+    }
+
+    public async removeByCenario(cenario: string): Promise<RemoveByCenarioDto> {
+        this.logger.log(`Removing contrato: ${cenario}`);
+        return {
+            ok: await this.adapter.removeByCenario(cenario)
+        };
     }
 }

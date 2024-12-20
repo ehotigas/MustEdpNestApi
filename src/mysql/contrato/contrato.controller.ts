@@ -1,5 +1,8 @@
-import { Body, Controller, Delete, HttpStatus, Inject, Param, Patch, Post, ValidationPipe } from "@nestjs/common";
-import { ApiBody, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Patch, Post, Query, ValidationPipe } from "@nestjs/common";
+import { CreateManyByDemandaResponseDto } from "./dto/create-many-by-demanda-response.dto";
+import { ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { CreateManyByDemandaDto } from "./dto/create-many-by-demanda.dto";
+import { GetContratoTableDto } from "./dto/get-contrato-table.dto";
 import { GenerateContractDto } from "./dto/generate-contract.dto";
 import { CreateByDemandaDto } from "./dto/create-by-demanda.dto";
 import { CreateContratoDto } from "./dto/create-contrato.dto";
@@ -8,8 +11,8 @@ import { RequestError } from "src/types/request-error";
 import { IContratoService } from "./contrato.service";
 import { Contrato } from "./contrato.entity";
 import { Providers } from "src/providers";
-import { CreateManyByDemandaDto } from "./dto/create-many-by-demanda.dto";
-import { CreateManyByDemandaResponseDto } from "./dto/create-many-by-demanda-response.dto";
+import { GetContratoTableFilterDto } from "./dto/get-contrato-table-filter.dto";
+import { RemoveByCenarioDto } from "./dto/remove-by-cenario.dto";
 
 
 @Controller("/contrato")
@@ -19,6 +22,27 @@ export class ContratoController {
         @Inject(Providers.ContratoService)
         private readonly service: IContratoService
     ) {  }
+
+    @Get("/:ponto")
+    @ApiParam({ name: "ponto", type: String })
+    @ApiQuery({ name: "ano", type: String })
+    @ApiQuery({ name: "cenario", type: String })
+    @ApiResponse({ status: HttpStatus.OK, type: GetContratoTableDto })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async findContratoTable(
+        @Param("ponto") ponto: string,
+        @Query("ano") ano: number,
+        @Query("cenario") cenario: string
+    ): Promise<GetContratoTableDto> {
+        return await this.service.findContratoTable(ponto, ano, cenario);
+    }
+
+    @Get("/table/filter")
+    @ApiResponse({ status: HttpStatus.OK, type: GetContratoTableFilterDto })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async findTableFilters(): Promise<GetContratoTableFilterDto> {
+        return await this.service.findTableFilters();
+    }
 
     @Post("/generate/:year")
     @ApiParam({ name: "year", type: Number })
@@ -72,5 +96,13 @@ export class ContratoController {
     @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
     public async remove(@Param("id") id: number): Promise<Contrato> {
         return await this.service.remove(id);
+    }
+
+    @Delete("/cenario/:cenario")
+    @ApiParam({ name: "cenario", type: String })
+    @ApiResponse({ status: HttpStatus.OK, type: Contrato })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async removeByCenario(cenario: string): Promise<RemoveByCenarioDto> {
+        return await this.service.removeByCenario(cenario);
     }
 }
