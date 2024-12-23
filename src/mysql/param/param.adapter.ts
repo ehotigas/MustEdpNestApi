@@ -1,8 +1,10 @@
 import { Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
 import { GetFilterHeaderDto } from "./dto/get-filter-header.dto";
+import { DemandaChart } from "./demanda-chart.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Ponto } from "../ponto/ponto.entity";
 import { ParamTable } from "./param-table";
+import { Region } from "src/types/region";
 import { Posto } from "src/types/posto";
 import { Param } from "./param.entity";
 import { DataType } from "./data-type";
@@ -14,6 +16,8 @@ export interface IParamAdapter {
     findById(id: number): Promise<Param>;
     findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto: Ponto, posto: Posto, data: Date, tipoDado: DataType, cenario: string): Promise<Param>;
     findParamTable(ponto: string, ano: number, cenario: string): Promise<ParamTable[]>;
+    findDemandaChart(ponto: string, posto: Posto, year: number): Promise<DemandaChart[]>;
+    findYearDemandaChart(region: Region, posto: Posto): Promise<DemandaChart[]>;
     getFilterHeader(): Promise<GetFilterHeaderDto>;
     save(input: Omit<Param, "id">): Promise<Param>;
     update(id: number, input: Partial<Param>): Promise<Param>;
@@ -68,6 +72,58 @@ export class ParamAdapter implements IParamAdapter {
             throw new InternalServerErrorException(`Fail to find param with id: ${id}`, error.message);
         }
     }
+
+    
+    public async findDemandaChart(ponto: string, posto: Posto, year: number): Promise<DemandaChart[]> {
+        try {
+            return await this.repository.query(`
+                select
+                    a.data,
+                    a.cenario,
+                    sum(valor) as demanda
+                from edp.param a
+                    inner join edp.ponto b on (
+                        a.pontoId = b.id and
+                        a.tipo_dado = 'DEMANDA' and
+                        year(a.data) = ${year} and
+                        a.pontoId = '${ponto}' and
+                        a.posto = '${posto}'
+                    )
+                    group by a.data, a.cenario
+                    order by a.cenario, a.data
+            `);
+        }
+        catch(error) {
+            this.logger.error(`Fail to find demanda chart`, error.stack);
+            throw new InternalServerErrorException(`Fail to find demanda chart`, error.message);
+        }
+    }
+
+    public async findYearDemandaChart(region: Region, posto: Posto): Promise<DemandaChart[]> {
+        try {
+            return await this.repository.query(`
+                select
+                    year(a.data) as data,
+                    a.cenario,
+                    sum(valor)/1000 as demanda
+                from edp.param a
+                    inner join edp.ponto b on (
+                        a.pontoId = b.id and
+                        a.tipo_dado = 'DEMANDA' and
+                        b.empresa = '${region}' and
+                        a.posto = '${posto}' and
+                        year(a.data) > 2014
+                    )
+                    group by year(a.data), a.cenario
+                    order by year(a.data)
+            `);
+        }
+        catch(error) {
+            this.logger.error(`Fail to find yearly demanda chart`, error.stack);
+            throw new InternalServerErrorException(`Fail to find yearly demanda chart`, error.message);
+        }
+    }
+
 
     public async getFilterHeader(): Promise<GetFilterHeaderDto> {
         try {

@@ -13,6 +13,9 @@ import { GetParamDto } from "./dto/get-param.dto";
 import { IParamService } from "./param.service";
 import { Providers } from "src/providers";
 import { Param } from "./param.entity";
+import { GetDemandaChartDto } from "./dto/get-demanda-chart.dto";
+import { Region } from "src/types/region";
+import { Posto } from "src/types/posto";
 
 
 @Controller("/param")
@@ -51,6 +54,29 @@ export class ParamController {
         @Query("cenario") cenario: string
     ): Promise<GetParamTableDto> {
         return await this.service.findParamTable(ponto, ano, cenario);
+    }
+
+    @Get("/demanda/chart/:ponto")
+    @ApiParam({ name: "ponto", type: String })
+    @ApiQuery({ name: "posto", type: String, enum: Posto })
+    @ApiQuery({ name: "ano", type: Number })
+    @ApiResponse({ status: HttpStatus.OK, type: GetDemandaChartDto })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async findDemandaChart(
+        @NestParam("ponto") ponto: string, 
+        @Query("posto") posto: Posto,
+        @Query("ano") year: number
+    ): Promise<GetDemandaChartDto> {
+        return await this.service.findDemandaChart(ponto, posto, year);
+    }
+
+    @Get("/demanda/chart/yearly/:region")
+    @ApiParam({ name: "region", type: String, enum: Region })
+    @ApiQuery({ name: "posto", type: String, enum: Posto })
+    @ApiResponse({ status: HttpStatus.OK, type: GetDemandaChartDto })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async findYearDemandaChart(@NestParam("region") region: Region, @Query("posto") posto: Posto): Promise<GetDemandaChartDto> {
+        return await this.service.findYearDemandaChart(region, posto);
     }
 
     @Get("/filter/header")

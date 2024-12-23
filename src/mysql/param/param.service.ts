@@ -2,6 +2,7 @@ import { BadRequestException, Inject, Injectable, Logger, NotFoundException } fr
 import { CreateManyParamResponseDto } from "./dto/create-many-param-response.dto";
 import { RemoveDemandaByCenarioDto } from "./dto/remove-demanda-by-cenario.dto";
 import { CreateManyParamDto } from "./dto/create-many-param.dto";
+import { GetDemandaChartDto } from "./dto/get-demanda-chart.dto";
 import { GetFilterHeaderDto } from "./dto/get-filter-header.dto";
 import { GetParamRequestDto } from "./dto/get-param-request.dto";
 import { GetParamTableDto } from "./dto/get-param-table.dto";
@@ -15,6 +16,7 @@ import { Providers } from "src/providers";
 import { Param } from "./param.entity";
 import { DataType } from "./data-type";
 import { Posto } from "src/types/posto";
+import { Region } from "src/types/region";
 
 
 export interface IParamService {
@@ -22,6 +24,8 @@ export interface IParamService {
     findById(id: number): Promise<Param>;
     findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto: Ponto, posto: Posto, data: Date, tipoDado: DataType, cenario: string): Promise<Param>;
     findParamTable(ponto: string, ano: number, cenario: string): Promise<GetParamTableDto>;
+    findDemandaChart(ponto: string, posto: Posto, year: number): Promise<GetDemandaChartDto>;
+    findYearDemandaChart(region: Region, posto: Posto): Promise<GetDemandaChartDto>;
     getFilterHeader(): Promise<GetFilterHeaderDto>;
     save(input: CreateParamDto): Promise<Param>;
     saveMany(input: CreateManyParamDto): Promise<CreateManyParamResponseDto>;
@@ -68,6 +72,20 @@ export class ParamService implements IParamService {
         this.logger.log(`fetching param table with: ponto: ${ponto}, ano: ${ano}, cenario: ${cenario}`);
         return {
             table: await this.adapter.findParamTable(ponto, ano, cenario)
+        };
+    }
+
+    public async findDemandaChart(ponto: string, posto: Posto, year: number): Promise<GetDemandaChartDto> {
+        this.logger.log(`Fetching demanda chart with: ponto: ${ponto}, year: ${year}`);
+        return {
+            data: await this.adapter.findDemandaChart(ponto, posto, year)
+        };
+    }
+
+    public async findYearDemandaChart(region: Region, posto: Posto): Promise<GetDemandaChartDto> {
+        this.logger.log(`Fetching year demanda chart with: region: ${region}, posto: ${posto}`);
+        return {
+            data: await this.adapter.findYearDemandaChart(region, posto)
         };
     }
 
