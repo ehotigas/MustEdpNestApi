@@ -6,11 +6,12 @@ import { Param } from "../param/param.entity";
 import { Providers } from "src/Providers";
 import { Posto } from "src/types/posto";
 import { Repository } from "typeorm";
+import { Region } from "src/types/region";
 
 
 export interface IPenalidadeAdapter {
-    findPenalidadeTable(year: number): Promise<Penalidade[]>; 
-    findPenalidadeChat(year: number, ponto: string, posto: Posto, contrato: string, demanda: string): Promise<Penalidade[]>;
+    findPenalidadeTable(year: number, region: Region): Promise<Penalidade[]>; 
+    findPenalidadeChat(year: number, ponto: string, posto: Posto, contrato: string, demanda: string, region: Region): Promise<Penalidade[]>;
 }
 
 
@@ -24,13 +25,13 @@ export class PenalidadeAdapter implements IPenalidadeAdapter {
         private readonly builder: IPenalidadeQueryBuilder
     ) {  }
 
-    public async findPenalidadeTable(year: number): Promise<Penalidade[]> {
+    public async findPenalidadeTable(year: number, region: Region): Promise<Penalidade[]> {
         try {
             await this.repository.query(this.builder.dropCustosTable());
             await this.repository.query(this.builder.createCustosTable(year));
             await this.repository.query(this.builder.dropPisTable());
             await this.repository.query(this.builder.createPisTable());
-            const data = await this.repository.query(this.builder.getPenalityData());
+            const data = await this.repository.query(this.builder.getPenalityData(region));
             await this.repository.query(this.builder.dropCustosTable());
             await this.repository.query(this.builder.dropPisTable());
             return data;
@@ -41,13 +42,13 @@ export class PenalidadeAdapter implements IPenalidadeAdapter {
         }
     }
 
-    public async findPenalidadeChat(year: number, ponto: string, posto: Posto, contrato: string, demanda: string): Promise<Penalidade[]> {
+    public async findPenalidadeChat(year: number, ponto: string, posto: Posto, contrato: string, demanda: string, region: Region): Promise<Penalidade[]> {
         try {
             await this.repository.query(this.builder.dropCustosTable());
             await this.repository.query(this.builder.createCustosTable(year));
             await this.repository.query(this.builder.dropPisTable());
             await this.repository.query(this.builder.createPisTable());
-            const data = await this.repository.query(this.builder.getPenalidadeChart(ponto, posto, contrato, demanda));
+            const data = await this.repository.query(this.builder.getPenalidadeChart(ponto, posto, contrato, demanda, region));
             await this.repository.query(this.builder.dropCustosTable());
             await this.repository.query(this.builder.dropPisTable());
             return data;

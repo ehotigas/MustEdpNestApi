@@ -1,10 +1,12 @@
+import { Region } from "src/types/region";
+
 export interface ISimuladorQueryBuilder {
     generate(year: number): string[];
     dropBaseCustos(): string;
     createBaseCustos(year: number): string;
     dropTablePis(): string;
     createTablePis(): string;
-    getSimuladorData(): string;
+    getSimuladorData(region: Region): string;
 }
 
 export class SimuladorQueryBuilder {
@@ -99,7 +101,7 @@ export class SimuladorQueryBuilder {
         `;
     }
 
-    public getSimuladorData(): string {
+    public getSimuladorData(region: Region): string {
         return `
             with custos as (
                     select
@@ -114,6 +116,7 @@ export class SimuladorQueryBuilder {
                             a.tipo_demanda = b.tipo_demanda and
                             a.tipo_contrato = b.tipo_contrato
                         )
+                        inner join edp.ponto c on a.ponto = c.id and c.empresa = '${region}'
                 )
                 select
                     -- ponto,
@@ -140,13 +143,13 @@ export class SimuladorQueryBuilder {
         `;
     }
 
-    public generate(year: number): string[] {
+    public generate(year: number, region: Region): string[] {
         return [
             this.dropBaseCustos(),
             this.createBaseCustos(year),
             this.dropTablePis(),
             this.createTablePis(),
-            this.getSimuladorData(),
+            this.getSimuladorData(region),
             this.dropBaseCustos(),
             this.dropTablePis(),
         ];

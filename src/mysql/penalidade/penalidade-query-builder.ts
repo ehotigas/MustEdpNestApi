@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { Region } from "src/types/region";
 import { Posto } from "src/types/posto";
 
 
@@ -7,8 +8,8 @@ export interface IPenalidadeQueryBuilder {
     createCustosTable(year: number): string;
     dropPisTable(): string;
     createPisTable(): string;
-    getPenalityData(): string;
-    getPenalidadeChart(ponto: string, posto: Posto, contrato: string, demanda: string): string;
+    getPenalityData(region: Region): string;
+    getPenalidadeChart(ponto: string, posto: Posto, contrato: string, demanda: string, region: Region): string;
 }
 
 
@@ -105,7 +106,7 @@ export class PenalidadeQueryBuilder implements IPenalidadeQueryBuilder {
         `;
     }
 
-    public getPenalityData(): string {
+    public getPenalityData(region: Region): string {
         return `
             with custos as (
                 select
@@ -120,12 +121,13 @@ export class PenalidadeQueryBuilder implements IPenalidadeQueryBuilder {
                         a.tipoDemanda = b.tipoDemanda and
                         a.tipoContrato = b.tipoContrato
                     )
+                    inner join edp.ponto c on a.ponto = c.id and c.empresa = '${region}'
             )
             select * from custos where penalidades > 0 and penalidades > \`add\` order by penalidades desc;
         `;
     }
 
-    public getPenalidadeChart(ponto: string, posto: Posto, contrato: string, demanda: string): string {
+    public getPenalidadeChart(ponto: string, posto: Posto, contrato: string, demanda: string, region: Region): string {
         return `
             with custos as (
                 select
@@ -140,6 +142,7 @@ export class PenalidadeQueryBuilder implements IPenalidadeQueryBuilder {
                         a.tipoDemanda = b.tipoDemanda and
                         a.tipoContrato = b.tipoContrato
                     )
+                    inner join edp.ponto c on a.ponto = c.id and c.empresa = '${region}'
             )
             select * from custos where ponto = '${ponto}' and tipoContrato = '${contrato}' and tipoDemanda = '${demanda}' and posto = '${posto}' order by data asc;
         `;

@@ -4,11 +4,12 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Simulador } from "./simulador.entity";
 import { Param } from "../param/param.entity";
 import { Providers } from "src/Providers";
+import { Region } from "src/types/region";
 import { Repository } from "typeorm";
 
 
 export interface ISimuladorAdapter {
-    findData(year: number): Promise<Simulador[]>;
+    findData(year: number, region: Region): Promise<Simulador[]>;
 }
 
 
@@ -22,13 +23,13 @@ export class SimuladorAdapter implements ISimuladorAdapter {
         private readonly builder: ISimuladorQueryBuilder
     ) {  }
 
-    public async findData(year: number): Promise<Simulador[]> {
+    public async findData(year: number, region: Region): Promise<Simulador[]> {
         try {
             await this.repository.query(this.builder.dropBaseCustos());
             await this.repository.query(this.builder.createBaseCustos(year));
             await this.repository.query(this.builder.dropTablePis());
             await this.repository.query(this.builder.createTablePis());
-            const data = await this.repository.query(this.builder.getSimuladorData());
+            const data = await this.repository.query(this.builder.getSimuladorData(region));
             await this.repository.query(this.builder.dropBaseCustos());
             await this.repository.query(this.builder.dropTablePis());
             return data;
