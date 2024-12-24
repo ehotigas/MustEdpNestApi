@@ -50,7 +50,7 @@ export class ContratoController {
     @ApiQuery({ name: "ano", type: Number })
     @ApiResponse({ status: HttpStatus.OK, type: GetContratoTableFilterDto })
     @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
-    public async findSimuladorContratoTable(@Param("cenario") cenario: string, @Query("ano") ano: string): Promise<GetSimuladorContratoTableDto> {
+    public async findSimuladorContratoTable(@Param("cenario") cenario: string, @Query("ano") ano: number): Promise<GetSimuladorContratoTableDto> {
         return await this.service.findSimuladorContratoTable(cenario, ano);
     }
 

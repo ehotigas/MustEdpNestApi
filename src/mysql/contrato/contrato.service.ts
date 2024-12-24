@@ -22,7 +22,7 @@ export interface IContratoService {
     generate(year: number): Promise<GenerateContractDto>;
     save(input: CreateContratoDto): Promise<Contrato>;
     findTableFilters(): Promise<GetContratoTableFilterDto>;
-    findSimuladorContratoTable(cenario: string, ano: string): Promise<GetSimuladorContratoTableDto>;
+    findSimuladorContratoTable(cenario: string, ano: number): Promise<GetSimuladorContratoTableDto>;
     saveByDemanda(input: CreateByDemandaDto): Promise<Contrato>;
     saveManyByDemanda(input: CreateManyByDemandaDto): Promise<CreateManyByDemandaResponseDto>;
     update(id: number, input: UpdateContratoDto): Promise<Contrato>;
@@ -55,7 +55,7 @@ export class ContratoService implements IContratoService {
         return await this.adapter.findTableFilters();
     }
 
-    public async findSimuladorContratoTable(cenario: string, ano: string): Promise<GetSimuladorContratoTableDto> {
+    public async findSimuladorContratoTable(cenario: string, ano: number): Promise<GetSimuladorContratoTableDto> {
         this.logger.log(`Fetching simulador contrato table with cenario: ${cenario}, ano: ${ano}`);
         return {
             data: await this.adapter.findSimuladorContratoTable(cenario, ano)

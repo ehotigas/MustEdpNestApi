@@ -15,7 +15,7 @@ export interface IContratoAdapter {
     generate(year: number): Promise<string>;
     findByDemanda(demanda: Param): Promise<Contrato>;
     findTableFilters(): Promise<GetContratoTableFilterDto>;
-    findSimuladorContratoTable(cenario: string, ano: string): Promise<SimuladorContratoTable[]>;
+    findSimuladorContratoTable(cenario: string, ano: number): Promise<SimuladorContratoTable[]>;
     save(input: Omit<Contrato, "id">): Promise<Contrato>;
     update(id: number, input: Partial<Contrato>): Promise<Contrato>;
     remove(id: number): Promise<Contrato>;
@@ -136,39 +136,59 @@ export class ContratoAdapter implements IContratoAdapter {
         }
     }
 
-    public async findSimuladorContratoTable(cenario: string, ano: string): Promise<SimuladorContratoTable[]> {
+    public async findSimuladorContratoTable(cenario: string, ano: number): Promise<SimuladorContratoTable[]> {
         try {
             return await this.repository.query(`
-                with contrato_demanda as (
+                with ultimo_contrato as (
                     select
                         b.pontoId as ponto,
-                        year(b.data) as data,
-                        b.cenario,
+                        b.data,
+                        sum(a.valor) as contrato,
                         sum(
-                            case when b.posto = 'Ponta' and month(b.data) = 12 then a.valor 
+                            case when posto = 'Ponta' then a.valor
                             else 0 end
-                        ) as contratoPonta,
+                        ) as ultimoContratoPonta,
                         sum(
-                            case when b.posto = 'Fora Ponta' and month(b.data) = 12 then a.valor 
+                            case when posto = 'Fora Ponta' then a.valor
                             else 0 end
-                        ) as contratoForaPonta,
-                        sum(
-                            case when b.posto = 'Ponta' then b.valor 
-                            else 0 end
-                        ) as demandaPonta,
-                        sum(
-                            case when b.posto = 'Fora Ponta' then b.valor 
-                            else 0 end
-                        ) as demandaForaPonta
+                        ) as ultimoContratoForaPonta
                     from edp.contrato a
-                        inner join edp.param b on a.demandaId = b.id and b.cenario = '${cenario}' and year(b.data) = ${ano}
-                        group by b.pontoId, b.cenario, year(b.data)
-                )
-                select
-                    b.nome as nomePonto,
-                    a.*
-                from contrato_demanda a
-                    inner join edp.ponto b on a.ponto = b.id;
+                        inner join edp.param b on a.demandaId = b.id
+                        where year(data) = ${ano - 1} and cenario = 'Realizado' and month(data) = 12
+                        group by pontoId, data, cenario
+                    ), contrato_demanda as (
+                        select
+                            b.pontoId as ponto,
+                            year(b.data) as data,
+                            b.cenario,
+                            sum(
+                                case when b.posto = 'Ponta' and month(b.data) = 12 then a.valor 
+                                else 0 end
+                            ) as contratoPonta,
+                            sum(
+                                case when b.posto = 'Fora Ponta' and month(b.data) = 12 then a.valor 
+                                else 0 end
+                            ) as contratoForaPonta,
+                            sum(
+                                case when b.posto = 'Ponta' then b.valor 
+                                else 0 end
+                            ) as demandaPonta,
+                            sum(
+                                case when b.posto = 'Fora Ponta' then b.valor 
+                                else 0 end
+                            ) as demandaForaPonta
+                        from edp.contrato a
+                            inner join edp.param b on a.demandaId = b.id and b.cenario = '${cenario}' and year(b.data) = ${ano}
+                            group by b.pontoId, b.cenario, year(b.data)
+                    )
+                    select
+                        b.nome as nomePonto,
+                        a.*,
+                        ultimoContratoPonta,
+                        ultimoContratoForaPonta
+                    from contrato_demanda a
+                        inner join edp.ponto b on a.ponto = b.id
+                        inner join ultimo_contrato c on a.ponto = c.ponto;
             `);
         }
         catch (error) {

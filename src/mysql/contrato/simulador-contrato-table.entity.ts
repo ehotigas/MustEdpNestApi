@@ -20,13 +20,19 @@ export class SimuladorContratoTable {
     
     @ApiProperty({ type: Number })
     contratoPonta: number;
+
+    @ApiProperty({ type: Number })
+    contratoForaPonta: number;
     
     @ApiProperty({ type: Number })
     demandaPonta: number;
     
     @ApiProperty({ type: Number })
-    contratoForaPonta: number;
-    
-    @ApiProperty({ type: Number })
     demandaForaPonta: number;
+
+    @ApiProperty({ type: Number })
+    ultimoContratoPonta: number;
+
+    @ApiProperty({ type: Number })
+    ultimoContratoForaPonta: number;
 }
