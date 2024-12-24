@@ -14,6 +14,7 @@ import { IContratoAdapter } from "./contrato.adapter";
 import { DataType } from "../param/data-type";
 import { Contrato } from "./contrato.entity";
 import { Providers } from "src/providers";
+import { GetSimuladorContratoTableDto } from "./dto/get-simulador-contrato-table.dto";
 
 
 export interface IContratoService {
@@ -21,6 +22,7 @@ export interface IContratoService {
     generate(year: number): Promise<GenerateContractDto>;
     save(input: CreateContratoDto): Promise<Contrato>;
     findTableFilters(): Promise<GetContratoTableFilterDto>;
+    findSimuladorContratoTable(cenario: string, ano: string): Promise<GetSimuladorContratoTableDto>;
     saveByDemanda(input: CreateByDemandaDto): Promise<Contrato>;
     saveManyByDemanda(input: CreateManyByDemandaDto): Promise<CreateManyByDemandaResponseDto>;
     update(id: number, input: UpdateContratoDto): Promise<Contrato>;
@@ -51,6 +53,13 @@ export class ContratoService implements IContratoService {
     public async findTableFilters(): Promise<GetContratoTableFilterDto> {
         this.logger.log(`Fetching contrato table filter options`);
         return await this.adapter.findTableFilters();
+    }
+
+    public async findSimuladorContratoTable(cenario: string, ano: string): Promise<GetSimuladorContratoTableDto> {
+        this.logger.log(`Fetching simulador contrato table with cenario: ${cenario}, ano: ${ano}`);
+        return {
+            data: await this.adapter.findSimuladorContratoTable(cenario, ano)
+        };
     }
 
 

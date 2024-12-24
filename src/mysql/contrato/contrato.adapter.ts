@@ -1,5 +1,6 @@
 import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
 import { GetContratoTableFilterDto } from "./dto/get-contrato-table-filter.dto";
+import { SimuladorContratoTable } from "./simulador-contrato-table.entity";
 import { IContratoQueryGenerator } from "./contrato-sql-query";
 import { ContratoTable } from "./contrato-table.entity";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -14,6 +15,7 @@ export interface IContratoAdapter {
     generate(year: number): Promise<string>;
     findByDemanda(demanda: Param): Promise<Contrato>;
     findTableFilters(): Promise<GetContratoTableFilterDto>;
+    findSimuladorContratoTable(cenario: string, ano: string): Promise<SimuladorContratoTable[]>;
     save(input: Omit<Contrato, "id">): Promise<Contrato>;
     update(id: number, input: Partial<Contrato>): Promise<Contrato>;
     remove(id: number): Promise<Contrato>;
@@ -126,6 +128,47 @@ export class ContratoAdapter implements IContratoAdapter {
                     b.ultimoContratoPonta,
                     b.ultimoContratoForaPonta
                 from contrato_atual a left join ultimo_contrato b on a.ponto = b.ponto;
+            `);
+        }
+        catch (error) {
+            this.logger.error(`Fail to find contrato table`, error.stack);
+            throw new InternalServerErrorException(`Fail to find contrato table`, error.message);
+        }
+    }
+
+    public async findSimuladorContratoTable(cenario: string, ano: string): Promise<SimuladorContratoTable[]> {
+        try {
+            return await this.repository.query(`
+                with contrato_demanda as (
+                    select
+                        b.pontoId as ponto,
+                        year(b.data) as data,
+                        b.cenario,
+                        sum(
+                            case when b.posto = 'Ponta' and month(b.data) = 12 then a.valor 
+                            else 0 end
+                        ) as contratoPonta,
+                        sum(
+                            case when b.posto = 'Fora Ponta' and month(b.data) = 12 then a.valor 
+                            else 0 end
+                        ) as contratoForaPonta,
+                        sum(
+                            case when b.posto = 'Ponta' then b.valor 
+                            else 0 end
+                        ) as demandaPonta,
+                        sum(
+                            case when b.posto = 'Fora Ponta' then b.valor 
+                            else 0 end
+                        ) as demandaForaPonta
+                    from edp.contrato a
+                        inner join edp.param b on a.demandaId = b.id and b.cenario = '${cenario}' and year(b.data) = ${ano}
+                        group by b.pontoId, b.cenario, year(b.data)
+                )
+                select
+                    b.nome as nomePonto,
+                    a.*
+                from contrato_demanda a
+                    inner join edp.ponto b on a.ponto = b.id;
             `);
         }
         catch (error) {

@@ -13,6 +13,7 @@ import { Contrato } from "./contrato.entity";
 import { Providers } from "src/providers";
 import { GetContratoTableFilterDto } from "./dto/get-contrato-table-filter.dto";
 import { RemoveByCenarioDto } from "./dto/remove-by-cenario.dto";
+import { GetSimuladorContratoTableDto } from "./dto/get-simulador-contrato-table.dto";
 
 
 @Controller("/contrato")
@@ -42,6 +43,15 @@ export class ContratoController {
     @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
     public async findTableFilters(): Promise<GetContratoTableFilterDto> {
         return await this.service.findTableFilters();
+    }
+
+    @Get("/simulador/table/:cenario")
+    @ApiParam({ name: "cenario", type: String })
+    @ApiQuery({ name: "ano", type: Number })
+    @ApiResponse({ status: HttpStatus.OK, type: GetContratoTableFilterDto })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async findSimuladorContratoTable(@Param("cenario") cenario: string, @Query("ano") ano: string): Promise<GetSimuladorContratoTableDto> {
+        return await this.service.findSimuladorContratoTable(cenario, ano);
     }
 
     @Post("/generate/:year")
