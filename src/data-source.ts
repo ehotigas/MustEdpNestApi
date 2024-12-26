@@ -3,10 +3,10 @@ import { DataSource } from "typeorm";
 
 const AppDataSource = new DataSource({
     type: 'mysql',
-    host: 'localhost',
-    port: 3306,
-    username: 'root',
-    password: 'root',
+    host: '10.161.248.71',
+    port: 3307,
+    username: 'eh_o_tigas',
+    password: '#Edp.202412',
     database: 'edp',
     entities: [__dirname + '/../**/*.entity.ts'],
     migrations: [__dirname + '/../**/*_migration.ts'],
