@@ -16,5 +16,9 @@ export class Contrato {
     
     @Column({ type: "decimal", precision: 15, scale: 3 })
     @ApiProperty({ type: Number })
-    valor: number;
+    contratoPonta: number;
+    
+    @Column({ type: "decimal", precision: 15, scale: 3 })
+    @ApiProperty({ type: Number })
+    contratoForaPonta: number;
 }

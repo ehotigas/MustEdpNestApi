@@ -2,8 +2,7 @@ import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typ
 import { Contrato } from "../contrato/contrato.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { Ponto } from "../ponto/ponto.entity";
-import { Posto } from "src/types/posto";
-import { DataType } from "./data-type";
+
 
 
 @Entity("param")
@@ -16,17 +15,9 @@ export class Param {
     @ApiProperty({ type: () => Ponto })
     ponto: Ponto;
     
-    @Column({ type: String })
-    @ApiProperty({ type: String, enum: Posto })
-    posto: Posto;
-    
     @Column({ type: Date })
     @ApiProperty({ type: Date })
     data: Date;
-
-    @Column({ name: "tipo_dado", type: String })
-    @ApiProperty({ type: String, enum: DataType })
-    tipoDado: DataType;
 
     @Column({ type: String, nullable: true })
     @ApiProperty({ type: String })
@@ -34,7 +25,27 @@ export class Param {
 
     @Column({ type: "decimal", precision: 15, scale: 3, nullable: true })
     @ApiProperty({ type: Number })
-    valor: number;
+    tarifaPonta: number;
+
+    @Column({ type: "decimal", precision: 15, scale: 3, nullable: true })
+    @ApiProperty({ type: Number })
+    tarifaForaPonta: number;
+
+    @Column({ type: "decimal", precision: 15, scale: 3, nullable: true })
+    @ApiProperty({ type: Number })
+    demandaPonta: number;
+
+    @Column({ type: "decimal", precision: 15, scale: 3, nullable: true })
+    @ApiProperty({ type: Number })
+    demandaForaPonta: number;
+
+    @Column({ type: "decimal", precision: 15, scale: 3, nullable: true })
+    @ApiProperty({ type: Number })
+    confiabilidadePonta: number;
+
+    @Column({ type: "decimal", precision: 15, scale: 3, nullable: true })
+    @ApiProperty({ type: Number })
+    confiabilidadeForaPonta: number;
 
     @OneToOne(() => Contrato, contrato => contrato.demanda)
     @ApiProperty({ type: () => Contrato })
@@ -43,10 +54,13 @@ export class Param {
     public constructor(param?: Partial<Param>) {
         this.id = param?.id;
         this.ponto = param?.ponto;
-        this.posto = param?.posto;
         this.data = param?.data;
-        this.tipoDado = param?.tipoDado;
         this.cenario = param?.cenario;
-        this.valor = param?.valor;
+        this.tarifaPonta = param?.tarifaPonta;
+        this.tarifaForaPonta = param?.tarifaForaPonta;
+        this.demandaPonta = param?.demandaPonta;
+        this.demandaForaPonta = param?.demandaForaPonta;
+        this.confiabilidadePonta = param?.confiabilidadePonta;
+        this.confiabilidadeForaPonta = param?.confiabilidadeForaPonta;
     }
 }

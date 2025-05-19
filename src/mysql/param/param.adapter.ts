@@ -50,7 +50,7 @@ export class ParamAdapter implements IParamAdapter {
     public async findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto: Ponto, posto: Posto, data: Date, tipoDado: DataType, cenario: string): Promise<Param> {
         try {
             return await this.repository.findOne({
-                where: { ponto, posto, data, tipoDado, cenario },
+                where: { ponto, data, cenario },
                 relations: ["ponto", "contrato"]
             });
         }

@@ -109,9 +109,19 @@ export class ParamService implements IParamService {
         // if (param && input.data < new Date()) throw new BadRequestException(`Fail to save param ${input.tipoDado}, this data param is before than now.`);
         const param = await this.adapter.findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto, input.posto, input.data, input.tipoDado, input.cenario);
         if (param) return await this.update(param.id, input);
+        const column = input.tipoDado.toLowerCase();
+        const posto = input.posto === Posto.PONTA ? "Ponta" : "ForaPonta";
         return await this.adapter.save({
-            ...input,
-            ponto: ponto
+            ponto: ponto,
+            data: input.data,
+            cenario: input.cenario,
+            tarifaPonta: null,
+            tarifaForaPonta: null,
+            demandaPonta: null,
+            demandaForaPonta: null,
+            confiabilidadePonta: null,
+            confiabilidadeForaPonta: null,
+            [`${column}${posto}`]: input.valor
         });
     }
 
@@ -134,10 +144,12 @@ export class ParamService implements IParamService {
         if (input?.ponto) {
             ponto = await this.pontoService.findById(input.ponto);
         }
+        const column = input.tipoDado.toLowerCase();
+        const posto = input.posto === Posto.PONTA ? "Ponta" : "ForaPonta";
         return await this.adapter.save({
             ...param,
-            ...input,
-            ponto: ponto
+            ponto: ponto,
+            [`${column}${posto}`]: input.valor
         });
         
     }

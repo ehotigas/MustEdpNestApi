@@ -1,6 +1,7 @@
-import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { CreateManyByDemandaResponseDto } from "./dto/create-many-by-demanda-response.dto";
+import { GetSimuladorContratoTableDto } from "./dto/get-simulador-contrato-table.dto";
 import { GetContratoTableFilterDto } from "./dto/get-contrato-table-filter.dto";
+import { Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { CreateManyByDemandaDto } from "./dto/create-many-by-demanda.dto";
 import { GetContratoTableDto } from "./dto/get-contrato-table.dto";
 import { GenerateContractDto } from "./dto/generate-contract.dto";
@@ -14,7 +15,7 @@ import { IContratoAdapter } from "./contrato.adapter";
 import { DataType } from "../param/data-type";
 import { Contrato } from "./contrato.entity";
 import { Providers } from "src/providers";
-import { GetSimuladorContratoTableDto } from "./dto/get-simulador-contrato-table.dto";
+import { Posto } from "src/types/posto";
 
 
 export interface IContratoService {
@@ -78,10 +79,12 @@ export class ContratoService implements IContratoService {
         if (new Date(input.data) < new Date()) {
             input.cenario = "Realizado";
         }
+        const posto = input.posto === Posto.PONTA ? "Ponta" : "ForaPonta";
         if (!demanda) {
+            
             demanda = await this.paramService.save({ ...input, tipoDado: DataType.DEMANDA, valor: null });
         }
-        return await this.save({ demanda: demanda.id, valor: input.valor });
+        return await this.adapter.save({ demanda: demanda, contratoPonta: null, contratoForaPonta: null, [`contrato${posto}`]: input.valor });
     }
 
     public async saveManyByDemanda(input: CreateManyByDemandaDto): Promise<CreateManyByDemandaResponseDto> {
@@ -95,20 +98,19 @@ export class ContratoService implements IContratoService {
     public async save(input: CreateContratoDto): Promise<Contrato> {
         this.logger.log(`Saving new contrato`);
         const demanda = await this.paramService.findById(input.demanda);
-        if (demanda.tipoDado !== DataType.DEMANDA) {
-            throw new BadRequestException(`Fail to create new contrato, param DataType should be DEMANDA`);
-        }
         const contrato = await this.adapter.findByDemanda(demanda);
         // if (contrato && new Date() >= demanda.data) throw new BadRequestException(`Fail to save contrato, this data is before than now.`);
+        const posto = input.posto === Posto.PONTA ? "Ponta" : "ForaPonta";
         if (contrato) {
-            return await this.adapter.update(contrato.id, { ...contrato, valor: input.valor });
+            return await this.adapter.update(contrato.id, { ...contrato, [`contrato${posto}`]: input.valor });
         }
-        return await this.adapter.save({ ...input, demanda: demanda });
+        return await this.adapter.save({ demanda: demanda, contratoPonta: null, contratoForaPonta: null, [`contrato${posto}`]: input.valor });
     }
 
     public async update(id: number, input: UpdateContratoDto): Promise<Contrato> {
         this.logger.log(`Updating contrato with id: ${id}`);
-        const contrato = await this.adapter.update(id, input);
+        const posto = input.posto === Posto.PONTA ? "Ponta" : "ForaPonta";
+        const contrato = await this.adapter.update(id, { [`contrato${posto}`]: input.valor });
         if (!contrato) {
             this.logger.warn(`Fail to update contrato with id: ${id}. Not found.`);
             throw new NotFoundException(`Fail to update contrato with id: ${id}. Not found.`);
