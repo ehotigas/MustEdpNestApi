@@ -11,6 +11,7 @@ import { Ponto } from "./ponto.entity";
 export interface IPontoService {
     findAll(id: string | undefined, nome: string | undefined, empresa: Region | undefined): Promise<GetPontoDto>;
     findById(id: string): Promise<Ponto>;
+    findByName(name: string): Promise<Ponto>;
     save(input: CreatePontoDto): Promise<Ponto>;
     update(id: string, input: UpdatePontoDto): Promise<Ponto>;
     remove(id: string): Promise<Ponto>;
@@ -46,6 +47,16 @@ export class PontoService implements IPontoService {
         if (!ponto) {
             this.logger.warn(`Fail to fetch ponto with id: ${id}. Not found`);
             throw new InternalServerErrorException(`Fail to fetch ponto with id: ${id}. Not found`);
+        }
+        return ponto;
+    }
+
+    public async findByName(name: string): Promise<Ponto> {
+        this.logger.log(`Fetching ponto with name: ${name}`);
+        const ponto = await this.adapter.findByName(name);
+        if (!ponto) {
+            this.logger.warn(`Fail to fetch ponto with name: ${name}. Not found`);
+            throw new InternalServerErrorException(`Fail to fetch ponto with name: ${name}. Not found`);
         }
         return ponto;
     }

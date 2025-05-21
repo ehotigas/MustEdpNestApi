@@ -7,6 +7,7 @@ import { Repository } from "typeorm";
 export interface IPontoAdapter {
     findAll(filters: Ponto): Promise<Ponto[]>;
     findById(id: string): Promise<Ponto>;
+    findByName(name: string): Promise<Ponto>;
     save(input: Ponto): Promise<Ponto>;
     update(id: string, input: Partial<Ponto>): Promise<Ponto>;
     remove(id: string): Promise<Ponto>;
@@ -37,6 +38,18 @@ export class PontoAdapter implements IPontoAdapter {
         try {
             return await this.repository.findOne({
                 where: { id }
+            });
+        }
+        catch (error) {
+            this.logger.error(`Fail to find all ponto`, error.stack);
+            throw new InternalServerErrorException(`Fail to find all ponto`, error.message);
+        }
+    }
+
+    public async findByName(name: string): Promise<Ponto> {
+        try {
+            return await this.repository.findOne({
+                where: { nome: name }
             });
         }
         catch (error) {

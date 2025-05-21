@@ -41,6 +41,15 @@ export class PontoController {
         return await this.service.findById(id);
     }
 
+    @Get("/name/:name")
+    @ApiParam({ name: "name", type: String })
+    @ApiResponse({ status: HttpStatus.OK, type: Ponto })
+    @ApiResponse({ status: HttpStatus.NOT_FOUND, type: RequestError })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async findByName(@Param("name") name: string): Promise<Ponto> {
+        return await this.service.findByName(name);
+    }
+
     @Post()
     @ApiBody({ type: CreatePontoDto })
     @ApiResponse({ status: HttpStatus.CREATED, type: Ponto })
