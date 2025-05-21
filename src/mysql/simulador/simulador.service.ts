@@ -20,8 +20,10 @@ export class SimuladorService implements ISimuladorService {
 
     public async findData(year: number, region: Region): Promise<GetSimuladorDataDto> {
         this.logger.log(`Fetching simulador data for year: ${year}`);
+        const data = await this.adapter.findData(year, region);
+        console.log(data);
         return {
-            data: await this.adapter.findData(year, region)
+            data
         };
     }
 }
