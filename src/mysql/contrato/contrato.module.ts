@@ -30,7 +30,8 @@ import { Providers } from "src/providers";
             provide: Providers.ContratoQueryGenerator,
             useClass: ContratoQueryGenerator
         }
-    ]
+    ],
+    exports: [ Providers.ContratoService ]
 })
 export class ContratoModule {
 

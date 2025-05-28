@@ -20,6 +20,7 @@ import { Module } from "@nestjs/common";
             migrations: [__dirname + '/../migrations/*.{ts}'],
             autoLoadEntities: true,
             synchronize: false,
+            connectTimeout: 30000
         }),
         ContratoModule,
         ParamModule,

@@ -5,5 +5,8 @@ export class GetFilterHeaderDto {
     ano: string[];
     
     @ApiProperty({ type: [String] })
-    cenario: string[]
+    demanda: string[]
+
+    @ApiProperty({ type: [String] })
+    contrato: string[]
 }

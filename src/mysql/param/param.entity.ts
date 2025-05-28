@@ -20,9 +20,9 @@ export class Param {
     @ApiProperty({ type: String, enum: Posto })
     posto: Posto;
     
-    @Column({ type: Date })
+    @Column({ type: "date" })
     @ApiProperty({ type: Date })
-    data: Date;
+    data: Date | string;
 
     @Column({ name: "tipo_dado", type: String })
     @ApiProperty({ type: String, enum: DataType })

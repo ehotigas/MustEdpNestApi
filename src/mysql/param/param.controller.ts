@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, HttpStatus, Inject, Param as NestParam, 
 import { ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreateManyParamResponseDto } from "./dto/create-many-param-response.dto";
 import { RemoveDemandaByCenarioDto } from "./dto/remove-demanda-by-cenario.dto";
+import { GetDemandaChartDto } from "./dto/get-demanda-chart.dto";
 import { CreateManyParamDto } from "./dto/create-many-param.dto";
 import { GetFilterHeaderDto } from "./dto/get-filter-header.dto";
 import { GetParamRequestDto } from "./dto/get-param-request.dto";
@@ -12,10 +13,9 @@ import { RequestError } from "src/types/request-error";
 import { GetParamDto } from "./dto/get-param.dto";
 import { IParamService } from "./param.service";
 import { Providers } from "src/providers";
-import { Param } from "./param.entity";
-import { GetDemandaChartDto } from "./dto/get-demanda-chart.dto";
 import { Region } from "src/types/region";
 import { Posto } from "src/types/posto";
+import { Param } from "./param.entity";
 
 
 @Controller("/param")
@@ -51,9 +51,10 @@ export class ParamController {
     public async findParamTable(
         @NestParam("ponto") ponto: string,
         @Query("ano") ano: number,
-        @Query("cenario") cenario: string
+        @Query("demanda") demanda: string,
+        @Query("contrato") contrato: string
     ): Promise<GetParamTableDto> {
-        return await this.service.findParamTable(ponto, ano, cenario);
+        return await this.service.findParamTable(ponto, ano, demanda, contrato);
     }
 
     @Get("/demanda/chart/:ponto")

@@ -11,23 +11,17 @@ export class ParamTable {
     demandaPonta: number;
 
     @ApiProperty({ type: Number })
+    contratoPonta: number;
+
+    @ApiProperty({ type: Number })
     demandaForaPonta: number;
 
     @ApiProperty({ type: Number })
-    confiabilidadePonta: number;
-
-    @ApiProperty({ type: Number })
-    confiabilidadeForaPonta: number;
+    contratoForaPonta: number;
     
     @ApiProperty({ type: Number })
-    draPonta: number;
+    contratoAnteriorPonta: number;
 
     @ApiProperty({ type: Number })
-    draForaPonta: number;
-    
-    @ApiProperty({ type: Number })
-    drpPonta: number;
-
-    @ApiProperty({ type: Number })
-    drpForaPonta: number;
+    contratoAnteriorForaPonta: number;
 }

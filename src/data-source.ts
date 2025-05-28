@@ -12,6 +12,7 @@ const AppDataSource = new DataSource({
     migrations: [__dirname + '/../**/*_migration.ts'],
     synchronize: false,
     logging: true,
+    connectTimeout: 30000
 });
 
 export default AppDataSource;

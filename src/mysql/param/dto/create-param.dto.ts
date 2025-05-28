@@ -13,7 +13,7 @@ export class CreateParamDto {
     posto: Posto;
     
     @ApiProperty({ type: Date })
-    data: Date;
+    data: Date | string;
 
     @ApiProperty({ type: String, enum: DataType })
     @IsEnum(DataType)

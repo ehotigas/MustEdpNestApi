@@ -22,8 +22,8 @@ import { Region } from "src/types/region";
 export interface IParamService {
     findAll(filters: GetParamRequestDto): Promise<GetParamDto>;
     findById(id: number): Promise<Param>;
-    findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto: Ponto, posto: Posto, data: Date, tipoDado: DataType, cenario: string): Promise<Param>;
-    findParamTable(ponto: string, ano: number, cenario: string): Promise<GetParamTableDto>;
+    findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto: Ponto, posto: Posto, data: Date | string, tipoDado: DataType, cenario: string): Promise<Param>;
+    findParamTable(ponto: string, ano: number, demanda: string, contrato: string): Promise<GetParamTableDto>;
     findDemandaChart(ponto: string, posto: Posto, year: number): Promise<GetDemandaChartDto>;
     findYearDemandaChart(region: Region, posto: Posto): Promise<GetDemandaChartDto>;
     getFilterHeader(): Promise<GetFilterHeaderDto>;
@@ -63,15 +63,15 @@ export class ParamService implements IParamService {
         return param;
     }
 
-    public async findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto: Ponto, posto: Posto, data: Date, tipoDado: DataType, cenario: string): Promise<Param> {
+    public async findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto: Ponto, posto: Posto, data: Date | string, tipoDado: DataType, cenario: string): Promise<Param> {
         this.logger.log(`Fetching param with ponto: ${ponto}, posto: ${posto}, data: ${data}, tipoDado: ${tipoDado}, cenario: ${cenario}`);
         return await this.adapter.findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto, posto, data, tipoDado, cenario);
     }
 
-    public async findParamTable(ponto: string, ano: number, cenario: string): Promise<GetParamTableDto> {
-        this.logger.log(`fetching param table with: ponto: ${ponto}, ano: ${ano}, cenario: ${cenario}`);
+    public async findParamTable(ponto: string, ano: number, demanda: string, contrato: string): Promise<GetParamTableDto> {
+        this.logger.log(`fetching param table with: ponto: ${ponto}, ano: ${ano}, demanda: ${demanda}, contrato: ${contrato}`);
         return {
-            table: await this.adapter.findParamTable(ponto, ano, cenario)
+            table: await this.adapter.findParamTable(ponto, ano, demanda, contrato)
         };
     }
 

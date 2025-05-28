@@ -1,3 +1,4 @@
+import { GetPenalityChartResponseDto } from "./dto/get-penality-chart-response.dto";
 import { Controller, Get, HttpStatus, Inject, Param, Query } from "@nestjs/common";
 import { ApiParam, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { GetSimuladorDataDto } from "./dto/get-simulador-data.dto";
@@ -22,5 +23,16 @@ export class SimuladorController {
     @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
     public async findData(@Param("year") year: number, @Query("region") region: Region): Promise<GetSimuladorDataDto> {
         return await this.service.findData(year, region);
+    }
+
+    @Get("/penalidade/:year")
+    @ApiParam({ name: "year", type: Number })
+    @ApiQuery({ name: "ponto", type: String })
+    @ApiQuery({ name: "contrato", type: String })
+    @ApiQuery({ name: "demanda", type: String })
+    @ApiResponse({ status: HttpStatus.OK, type: GetPenalityChartResponseDto })
+    @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: RequestError })
+    public async findPenalitiesChart(@Param("year") year: number, @Query("ponto") ponto: string, @Query("contrato") contrato: string, @Query("demanda") demanda: string): Promise<GetPenalityChartResponseDto> {
+        return await this.service.findPenalitiesChart(ponto, year, contrato, demanda);
     }
 }

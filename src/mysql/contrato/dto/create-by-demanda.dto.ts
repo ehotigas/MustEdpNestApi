@@ -11,7 +11,7 @@ export class CreateByDemandaDto {
     posto: Posto;
     
     @ApiProperty({ type: Date })
-    data: Date;
+    data: Date | string;
 
     @ApiProperty({ type: String })
     cenario: string;
