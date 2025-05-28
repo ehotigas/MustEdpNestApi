@@ -23,7 +23,7 @@ export interface ISharepointParamAdapter {
 
 @Injectable()
 export class SharepointParamAdapter implements ISharepointParamAdapter {
-    private readonly path: string = "C:/Users/E707929/OneDrive - EDP/Documents/MUSTDeparasContrato.csv";
+    private readonly path: string = "C:/Users/TEMP.EDP/EDP/O365_EDPBR-ESTUDOS DE MERCADO - Acompanhamento/Painel_Temperatura/MUSTDeparasContrato.csv";
     public constructor(
         @Inject(Providers.CsvParser) private readonly csvParser: ICsvParser,
         @Inject(Providers.PontoService) private readonly pontoService: IPontoService,
