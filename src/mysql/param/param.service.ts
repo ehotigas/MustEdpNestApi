@@ -139,7 +139,7 @@ export class ParamService implements IParamService {
         if (input?.ponto) {
             ponto = await this.pontoService.findById(input.ponto);
         }
-        console.log(input.valor);
+        console.log({ ...param, ...input, ponto: ponto });
         return await this.adapter.save({
             ...param,
             ...input,
