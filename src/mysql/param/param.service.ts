@@ -142,6 +142,7 @@ export class ParamService implements IParamService {
         return await this.adapter.update(id, {
             ...param,
             ...input,
+            valor: input.valor ? input.valor : param.valor,
             ponto: ponto
         });
         
