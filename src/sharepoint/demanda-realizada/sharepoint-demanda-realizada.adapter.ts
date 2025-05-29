@@ -39,6 +39,7 @@ export class SharepointDemandaRealizadaAdapter implements ISharepointDemandaReal
 
         for (const row of data) {
             const date = parse(row.MESANO, 'dd/MM/yyyy', new Date());
+            console.log(date);
             if (new Date(date).getUTCFullYear() < new Date().getUTCFullYear() - 1 || new Date(date).getUTCFullYear() > new Date().getUTCFullYear() + 2) continue;
             const ponto = await this.pontoService.findByName(row.Ponto);
             const contrato = row.Contrato ? row.Contrato.replace(",", ".") : "0";
