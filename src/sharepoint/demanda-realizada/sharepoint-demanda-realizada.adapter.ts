@@ -3,10 +3,9 @@ import { IPontoService } from "src/mysql/ponto/ponto.service";
 import { DataType } from "src/mysql/param/data-type";
 import { Inject, Injectable } from "@nestjs/common";
 import { ICsvParser } from "../utils/csv-parser";
-import { IDateUtils } from "../utils/date-utils";
 import { Providers } from "src/Providers";
 import { Posto } from "src/types/posto";
-import { parse } from "date-fns";
+import { parse, isValid } from "date-fns";
 
 
 
@@ -40,6 +39,7 @@ export class SharepointDemandaRealizadaAdapter implements ISharepointDemandaReal
 
         for (const row of data) {
             const date = parse(row.MESANO, 'dd/MM/yyyy', new Date());
+            if (!isValid(date)) continue;
             if (new Date(date).getUTCFullYear() < new Date().getUTCFullYear() - 1 || new Date(date).getUTCFullYear() > new Date().getUTCFullYear() + 2) continue;
             const ponto = await this.pontoService.findByName(row.Ponto);
             const contrato = row.Contrato ? row.Contrato.replace(",", ".") : "0";
