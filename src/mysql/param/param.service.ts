@@ -96,7 +96,10 @@ export class ParamService implements IParamService {
 
     public async save(input: CreateParamDto): Promise<Param> {
         this.logger.log(`Saving new param`);
-        if (input.valor == null || isNaN(input.valor)) input.valor = 0;
+        if (input.valor == null || isNaN(input.valor)) {
+            console.log(`Input is NaN: ${input.valor}`);
+            input.valor = 0;
+        }
         const ponto = await this.pontoService.findById(input.ponto);
         if (input.tipoDado === DataType.CONFIABILIDADE) {
             input.cenario = null;
