@@ -38,7 +38,7 @@ export class SharepointDemandaRealizadaAdapter implements ISharepointDemandaReal
         const data: DemandaTableRow[] = await this.csvParser.parse(this.path);
 
         for (const row of data) {
-            const date = parse(row.MESANO, 'yyyy/MM/dd', new Date());
+            const date = parse(row.MESANO, 'yyyy-MM-dd', new Date());
             if (!isValid(date)) continue;
             if (new Date(date).getUTCFullYear() < new Date().getUTCFullYear() - 1 || new Date(date).getUTCFullYear() > new Date().getUTCFullYear() + 2) continue;
             const ponto = await this.pontoService.findByName(row.Ponto);
