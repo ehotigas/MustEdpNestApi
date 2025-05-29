@@ -96,6 +96,7 @@ export class ParamService implements IParamService {
 
     public async save(input: CreateParamDto): Promise<Param> {
         this.logger.log(`Saving new param`);
+        if (input.valor == null || isNaN(input.valor)) input.valor = 0;
         const ponto = await this.pontoService.findById(input.ponto);
         if (input.tipoDado === DataType.CONFIABILIDADE) {
             input.cenario = null;
@@ -125,6 +126,7 @@ export class ParamService implements IParamService {
 
     public async update(id: number, input: UpdateParamDto): Promise<Param> {
         this.logger.log(`Updating param with id: ${id}`);
+        if (input.valor == null || isNaN(input.valor)) input.valor = 0;
         const param = await this.adapter.findById(id);
         if (!param) {
             this.logger.warn(`Fail to update param with id: ${id}. Not found.`);

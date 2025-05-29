@@ -73,6 +73,7 @@ export class ContratoService implements IContratoService {
 
     public async saveByDemanda(input: CreateByDemandaDto): Promise<Contrato> {
         this.logger.log(`Saving new contrato by demanda`);
+        if (input.valor == null || isNaN(input.valor)) input.valor = 0;
         const ponto = await this.pontoService.findById(input.ponto);
         let demanda = await this.paramService.findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto, input.posto, input.data, DataType.DEMANDA, input.cenario);
         if (new Date(input.data) < new Date()) {
@@ -94,6 +95,7 @@ export class ContratoService implements IContratoService {
 
     public async save(input: CreateContratoDto): Promise<Contrato> {
         this.logger.log(`Saving new contrato`);
+        if (input.valor == null || isNaN(input.valor)) input.valor = 0;
         const demanda = await this.paramService.findById(input.demanda);
         if (demanda.tipoDado !== DataType.DEMANDA) {
             throw new BadRequestException(`Fail to create new contrato, param DataType should be DEMANDA`);
@@ -108,6 +110,7 @@ export class ContratoService implements IContratoService {
 
     public async update(id: number, input: UpdateContratoDto): Promise<Contrato> {
         this.logger.log(`Updating contrato with id: ${id}`);
+        if (input.valor == null || isNaN(input.valor)) input.valor = 0;
         const contrato = await this.adapter.update(id, input);
         if (!contrato) {
             this.logger.warn(`Fail to update contrato with id: ${id}. Not found.`);
