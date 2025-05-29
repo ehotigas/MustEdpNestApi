@@ -43,7 +43,7 @@ export class SharepointDemandaAdapter implements ISharepointDemandaAdapter {
                 if (regex.test(columnName)) {
                     const value = row[columnName] ? (row[columnName] as string).toString().replace(",", ".") : "0";
                     const date = this.dateUtils.getDate(columnName as DateColumn);
-                    if (new Date(date).getUTCFullYear() < new Date().getUTCFullYear() - 1 || new Date(date).getUTCFullYear() > new Date().getUTCFullYear() + 2) continue;
+                    if (new Date(date).getUTCFullYear() < new Date().getUTCFullYear() || new Date(date).getUTCFullYear() > new Date().getUTCFullYear() + 2) continue;
                     const ponto = await this.pontoService.findByName(row.Ponto);
                     paramList.push({
                         ponto: ponto.id,

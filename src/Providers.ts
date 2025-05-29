@@ -15,6 +15,8 @@ export enum Providers {
     SharepointContratoService = "SharepointContratoService",
     SharepointDemandaAdapter = "SharepointDemandaAdapter",
     SharepointDemandaService = "SharepointDemandaService",
+    SharepointDemandaRealizadaAdapter = "SharepointDemandaRealizadaAdapter",
+    SharepointDemandaRealizadaService = "SharepointDemandaRealizadaService",
     SharepointParamAdapter = "SharepointParamAdapter",
     SharepointParamService = "SharepointParamService",
     SimuladorAdapter = "SimuladorAdapter",

@@ -43,7 +43,7 @@ export class SharepointParamAdapter implements ISharepointParamAdapter {
         switch (row.Tipo) {
             case "Confiabilidade": return DataType.CONFIABILIDADE;
             case "Tarifa": return DataType.TARIFA;
-            case "Real": return DataType.DEMANDA;
+            // case "Real": return DataType.DEMANDA;
             default: return null;
         }
     }
@@ -54,7 +54,7 @@ export class SharepointParamAdapter implements ISharepointParamAdapter {
         
         for (const row of data) {
             const rowKeys = Object.keys(row);
-            if (row.Tipo == "Contrato" || row.Tipo == "Orçado") continue;
+            if (row.Tipo == "Contrato" || row.Tipo == "Orçado" || row.Tipo == "Real") continue;
             for (const columnName of rowKeys) {
                 const regex = /^(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\/\d{2}$/;
                 if (regex.test(columnName)) {
