@@ -54,8 +54,8 @@ export class SharepointDemandaRealizadaAdapter implements ISharepointDemandaReal
                     posto: row.Posto,
                     tipoDado: DataType.DEMANDA,
                     data: date,
-                    cenario: 'Contrato',
-                    valor: parseFloat(contrato)
+                    cenario: 'Orçado',
+                    valor: parseFloat(orcado)
                 }
             });
             paramList.push({
@@ -65,8 +65,8 @@ export class SharepointDemandaRealizadaAdapter implements ISharepointDemandaReal
                     posto: row.Posto,
                     tipoDado: DataType.DEMANDA,
                     data: date,
-                    cenario: 'Orçado',
-                    valor: parseFloat(orcado)
+                    cenario: 'Contrato',
+                    valor: parseFloat(contrato)
                 }
             });
             paramList.push({
