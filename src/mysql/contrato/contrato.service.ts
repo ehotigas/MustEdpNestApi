@@ -74,11 +74,9 @@ export class ContratoService implements IContratoService {
     public async saveByDemanda(input: CreateByDemandaDto): Promise<Contrato> {
         this.logger.log(`Saving new contrato by demanda`);
         if (input.valor == null || isNaN(input.valor)) input.valor = 0;
+        if (new Date(input.data) < new Date()) input.cenario = "Realizado";
         const ponto = await this.pontoService.findById(input.ponto);
         let demanda = await this.paramService.findByPontoAndPostoAndDataAndTipoDadoAndCenario(ponto, input.posto, input.data, DataType.DEMANDA, input.cenario);
-        if (new Date(input.data) < new Date()) {
-            input.cenario = "Realizado";
-        }
         if (!demanda) {
             demanda = await this.paramService.save({ ...input, tipoDado: DataType.DEMANDA, valor: null });
         }
