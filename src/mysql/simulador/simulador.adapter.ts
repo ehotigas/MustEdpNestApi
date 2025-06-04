@@ -92,7 +92,7 @@ export class SimuladorAdapter implements ISimuladorAdapter {
                         else 0
                     end as valor_add,
                     case
-                        when b.demanda > a.contrato * 1.1 then d.tarifa * (b.demanda - a.contrato) * 3
+                        when b.demanda > a.contrato * 1.1 then d.tarifa * (b.demanda * 1.1 - a.contrato) * 3
                         else 0
                     end as valor_piu
                 from contratos a
