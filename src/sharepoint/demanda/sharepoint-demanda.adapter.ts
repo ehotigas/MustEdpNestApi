@@ -58,7 +58,7 @@ export class SharepointDemandaAdapter implements ISharepointDemandaAdapter {
                 const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
                 if (dateRegex.test(columnName)) {
                     const value = row[columnName] ? (row[columnName] as string).toString().replace(",", ".") : "0";
-                    const date = `${columnName.slice(6)}-${columnName.slice(3, 4)}-${columnName.slice(0, 2)}`;
+                    const date = `${columnName.slice(6)}-${columnName.slice(3, 5)}-${columnName.slice(0, 2)}`;
                     if (new Date(date).getUTCFullYear() < new Date().getUTCFullYear() || new Date(date).getUTCFullYear() > new Date().getUTCFullYear() + 2) continue;
                     const ponto = await this.pontoService.findByName(row.Ponto);
                     paramList.push({
