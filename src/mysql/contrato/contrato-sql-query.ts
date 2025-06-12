@@ -78,7 +78,7 @@ export class ContratoQueryGenerator {
                     b.valor as contrato
                 from demanda a
                     inner join contrato b on a.id = b.demandaId
-                    where month(a.data) = 12 and a.cenario = 'Realizado'
+                    where month(a.data) = 12 and a.cenario = 'Contrato'
             ), base_parametros as (
                 select
                     a.id as demanda_id,
