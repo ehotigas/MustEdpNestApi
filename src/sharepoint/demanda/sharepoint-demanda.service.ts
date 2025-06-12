@@ -20,6 +20,7 @@ export class SharepointDemandaService implements ISharepointDemandaService {
     ) {  }
 
     public async findAll(): Promise<CreateParamDto[]> {
+        this.logger.log(`Fetching all demand records`)
         return await this.adapter.findAll();
     }
 

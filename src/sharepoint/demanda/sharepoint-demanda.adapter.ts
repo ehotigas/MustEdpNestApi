@@ -25,6 +25,7 @@ export interface ISharepointDemandaAdapter {
 
 @Injectable()
 export class SharepointDemandaAdapter implements ISharepointDemandaAdapter {
+    // private readonly path: string = "C:/Users/E707929/EDP/O365_EDPBR-ESTUDOS DE MERCADO - Documentos/_DATABRICKS/MERCADO/Demandas_v2.csv";
     private readonly path: string = "C:/Users/TEMP.EDP/EDP/O365_EDPBR-ESTUDOS DE MERCADO - _DATABRICKS/MERCADO/Demandas_v2.csv";
     public constructor(
         @Inject(Providers.CsvParser) private readonly csvParser: ICsvParser,
@@ -35,14 +36,14 @@ export class SharepointDemandaAdapter implements ISharepointDemandaAdapter {
     public async findAll(): Promise<CreateParamDto[]> {
         const paramList: CreateParamDto[] = [];
         const data: DemandaTableRow[] = await this.csvParser.parse(this.path);
-        
+
         for (const row of data) {
             const rowKeys = Object.keys(row);
             for (const columnName of rowKeys) {
                 const regex = /^(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\/\d{2}$/;
-                if (regex.test(columnName)) {
+                if (regex.test(columnName.toLowerCase())) {
                     const value = row[columnName] ? (row[columnName] as string).toString().replace(",", ".") : "0";
-                    const date = this.dateUtils.getDate(columnName as DateColumn);
+                    const date = this.dateUtils.getDate(columnName.toLowerCase() as DateColumn);
                     if (new Date(date).getUTCFullYear() < new Date().getUTCFullYear() || new Date(date).getUTCFullYear() > new Date().getUTCFullYear() + 2) continue;
                     const ponto = await this.pontoService.findByName(row.Ponto);
                     paramList.push({
