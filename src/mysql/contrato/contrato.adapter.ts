@@ -93,7 +93,7 @@ export class ContratoAdapter implements IContratoAdapter {
                     ) as ultimoContratoForaPonta
                 from edp.contrato a
                     inner join edp.param b on a.demandaId = b.id
-                    where pontoId = '${ponto}' and year(data) = ${ano - 1} and cenario = 'Realizado' and month(data) = 12
+                    where pontoId = '${ponto}' and year(data) = ${ano - 1} and cenario = 'Contrato' and month(data) = 12
                     group by pontoId, data, cenario
                 ), contrato_atual as (
                     select
