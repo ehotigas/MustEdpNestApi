@@ -89,14 +89,14 @@ export class ContratoQueryGenerator {
                     a.valor as demanda,
                     b.valor as tarifa,
                     c.valor as confiabilidade,
-                    d.valor as contrato,
+                    -- d.valor as contrato,
                     e.contrato as ultimo_contrato,
                     e.contrato*0.9 as minimo_contrato
                 from demanda a
-                    left join tarifa b on a.pontoId = b.pontoId and a.data = b.data and a.posto = b.posto
-                    left join confiabilidade c on a.pontoId = c.pontoId and a.data = c.data and a.posto = c.posto
-                    left join edp.contrato d on a.id = d.demandaId
-                    left join ultimo_contrato e on a.pontoId = e.ponto and year(a.data) = e.ano and a.posto = e.posto
+                    inner join tarifa b on a.pontoId = b.pontoId and a.data = b.data and a.posto = b.posto
+                    inner join confiabilidade c on a.pontoId = c.pontoId and a.data = c.data and a.posto = c.posto
+                    -- inner join edp.contrato d on a.id = d.demandaId
+                    inner join ultimo_contrato e on a.pontoId = e.ponto and year(a.data) = e.ano and a.posto = e.posto
                     where year(a.data) = ${year}
             ), sugestao_contrato as (
                 select

@@ -1,7 +1,7 @@
 drop temporary table if exists temp_contrato;
 create temporary table temp_contrato as
 with demanda as (
-    select * from param where tipo_dado = 'DEMANDA' and year(data) = ${year}
+    select * from param where tipo_dado = 'DEMANDA' and year(data) = 2026
 ), temp_contrato as (
     select
         a.*
@@ -55,15 +55,15 @@ with tarifa as (
         a.valor as demanda,
         b.valor as tarifa,
         c.valor as confiabilidade,
-        d.valor as contrato,
+        -- d.valor as contrato,
         e.contrato as ultimo_contrato,
         e.contrato*0.9 as minimo_contrato
     from demanda a
-        left join tarifa b on a.pontoId = b.pontoId and a.data = b.data and a.posto = b.posto
-        left join confiabilidade c on a.pontoId = c.pontoId and a.data = c.data and a.posto = c.posto
-        left join edp.contrato d on a.id = d.demandaId
-        left join ultimo_contrato e on a.pontoId = e.ponto and year(a.data) = e.ano and a.posto = e.posto
-        where year(a.data) = ${year}
+        inner join tarifa b on a.pontoId = b.pontoId and a.data = b.data and a.posto = b.posto
+        inner join confiabilidade c on a.pontoId = c.pontoId and a.data = c.data and a.posto = c.posto
+        -- inner join edp.contrato d on a.id = d.demandaId
+        inner join ultimo_contrato e on a.pontoId = e.ponto and year(a.data) = e.ano and a.posto = e.posto
+        where year(a.data) = 2026
 ), sugestao_contrato as (
     select
         cast(sugestao_contrato * 10 as signed) as sugestao_contrato_id,
@@ -142,5 +142,5 @@ from (
     from custo
 ) a order by ponto, tipo_demanda, data;
 
-insert into contrato (valor, demandaId)
+insert into contrato (coalesce(valor, 0), demandaId)
 select sugestao_contrato as valor, demanda_id as demandaId from base_simulador where id = 1 order by ponto, tipo_demanda, data;
