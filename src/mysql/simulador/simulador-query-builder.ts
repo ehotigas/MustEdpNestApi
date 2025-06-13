@@ -123,7 +123,7 @@ export class SimuladorQueryBuilder {
                     -- posto,
                     tipo_contrato as tipoContrato,
                     tipo_demanda as tipoDemanda,
-                    sum(contrato)/1000 as contrato,
+                    sum(contrato) as contrato,
                     sum(
                         case when posto = 'Ponta' then contrato
                         else 0 end
@@ -133,10 +133,10 @@ export class SimuladorQueryBuilder {
                         else 0 end
                     )/1000 as contratoForaPonta,
                     sum(demanda) as demanda,
-                    sum(valor_eust)/1000000000 as eust,
-                    sum(valor_add)/1000000000 as \`add\`,
-                    sum(valor_penalidades)/1000000000 as penalidades,
-                    sum(valor_penalidades + valor_eust)/1000000000 as total
+                    sum(valor_eust)/1000000 as eust,
+                    sum(valor_add)/1000000 as \`add\`,
+                    sum(valor_penalidades)/1000000 as penalidades,
+                    sum(valor_penalidades + valor_eust)/1000000 as total
                 from custos
                     group by tipo_contrato, tipo_demanda
                     order by tipo_contrato, tipo_demanda;
