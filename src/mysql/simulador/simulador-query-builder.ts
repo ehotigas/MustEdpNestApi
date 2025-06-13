@@ -127,11 +127,11 @@ export class SimuladorQueryBuilder {
                     sum(
                         case when posto = 'Ponta' then contrato
                         else 0 end
-                    )/1000 as contratoPonta,
+                    ) as contratoPonta,
                     sum(
                         case when posto = 'Fora Ponta' then contrato
                         else 0 end
-                    )/1000 as contratoForaPonta,
+                    ) as contratoForaPonta,
                     sum(demanda) as demanda,
                     sum(valor_eust)/1000000 as eust,
                     sum(valor_add)/1000000 as \`add\`,
