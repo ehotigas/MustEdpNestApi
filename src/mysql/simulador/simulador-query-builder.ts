@@ -25,7 +25,7 @@ export class SimuladorQueryBuilder {
                         a.cenario as tipo_contrato,
                         b.valor as contrato
                     from edp.param a inner join edp.contrato b on a.id = b.demandaId
-                        where year(a.data) = ${year}
+                        where year(a.data) = ${year} and a.cenario != 'Realizado' and a.cenario != 'Orçado'
                 ), demanda as (
                     select
                         pontoId,
