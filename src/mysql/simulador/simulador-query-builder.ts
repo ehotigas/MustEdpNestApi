@@ -33,7 +33,7 @@ export class SimuladorQueryBuilder {
                         posto,
                         cenario as tipo_demanda,
                         valor as demanda
-                    from edp.param where tipo_dado = 'DEMANDA' and year(data) = ${year} and cenario != 'Realizado' and cenario != 'Orçado'
+                    from edp.param where tipo_dado = 'DEMANDA' and year(data) = ${year} and cenario != 'Realizado' and cenario != 'Orçado' and cenario != 'Contrato'
                 ), confiabilidade as (
                     select
                         pontoId,
